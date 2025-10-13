@@ -11,5 +11,10 @@ main/
 └── (diğer bir sürü program dosyası)...
 
 
-
-pip install customtkinter pypdf pytesseract pillow pdf2image auto-py-to-exe
+exe öncesi calıstırmak icin gerekli python kütüphaneleri asagıda 
+pip install customtkinter 
+pip install pypdf 
+pip install pytesseract 
+pip install pillow 
+pip install pdf2image 
+pip install auto-py-to-exe
