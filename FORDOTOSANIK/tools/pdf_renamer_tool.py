@@ -77,8 +77,10 @@ class PDFRenamerFrame(ctk.CTkFrame):
         ]
         
         adsoyad_patterns = [
-            re.compile(r'AD SOYAD\s+([A-ZÇĞİÖŞÜ\s]+?)\s+İŞYERİ', re.IGNORECASE),
-            re.compile(r'^(?:Ad Soyad|Adı Soyadı)\s*[:\-]\s*([^\n\r]+)', re.IGNORECASE | re.MULTILINE)
+    # Bu desen artık "İŞYERİ" şartı olmadan "AD SOYAD" etiketinden sonraki ismi arar.
+            re.compile(r'AD SOYAD\s+([A-ZÇĞİÖŞÜ\s]+)', re.IGNORECASE),
+    # Bu desen "Adı / Soyadı" gibi formatlar için çalışmaya devam eder.
+            re.compile(r'^(?:Ad Soyad|Adı\s*/\s*Soyadı)\s*[:\-]\s*([^\n\r]+)', re.IGNORECASE | re.MULTILINE)
         ]
 
         sicil_patterns = [
