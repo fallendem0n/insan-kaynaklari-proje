@@ -18,6 +18,9 @@ class App(ctk.CTk):
 
         self.tab_view.add("PDF Bölücü")
         self.tab_view.add("PDF Yeniden Adlandır")
+        self.tab_view.add("Eğitim Sertifikası Formatı")
+        self.tab_view.add("PDF to TXT")
+        self.tab_view.add("Yapım Aşamasında #1")
 
         self.pdf_splitter_frame = PDFSplitterFrame(master=self.tab_view.tab("PDF Bölücü"))
         self.pdf_splitter_frame.pack(fill="both", expand=True)
