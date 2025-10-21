@@ -11,7 +11,7 @@ class PDFSplitterFrame(ctk.CTkFrame):
 
     def create_widgets(self):
         # --- YENİ EKLENEN BİLGİLENDİRME KUTUSU ---
-        self.info_textbox = ctk.CTkTextbox(self, height=50, wrap="word") 
+        self.info_textbox = ctk.CTkTextbox(self, height=66, wrap="word") 
         self.info_textbox.pack(padx=10, pady=(10, 5), fill="x", expand=False) # expand=False ile yüksekliği sabit tutar
 
         bilgi_metni = """
