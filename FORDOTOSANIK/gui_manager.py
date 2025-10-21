@@ -58,7 +58,7 @@ class App(ctk.CTk):
 
 
         self.title("Ofis Yardımcısı")
-        self.geometry("700x575")
+        self.geometry("1000x775")
 
         # Görünüm modu (Tema renginden ayrıdır)
         ctk.set_appearance_mode("Dark") # Veya "Light"
@@ -89,7 +89,7 @@ class App(ctk.CTk):
         self.pdf_to_txt_frame = PDFToTXTFrame(master=self.tab_view.tab("PDF to TXT"))
         self.pdf_to_txt_frame.pack(fill="both", expand=True)
 
-        self.mail_merger_frame = MailMergerFrame(master=self.tab_view.tab("Merge(BAKIMDA)"))
+        self.mail_merger_frame = MailMergerFrame(master=self.tab_view.tab("Merge Oluşturucu"))
         self.mail_merger_frame.pack(fill="both", expand=True)
 
         # --- ALT KISIM (TEMA DEĞİŞTİRME BUTONU) ---
