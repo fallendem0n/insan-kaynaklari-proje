@@ -1,6 +1,9 @@
 ﻿import customtkinter as ctk
 from tools.pdf_splitter_tool import PDFSplitterFrame
 from tools.pdf_renamer_tool import PDFRenamerFrame
+# Yeni modülleri import edin:
+from tools.egitim_sertifikasi_tool import EgitimSertifikasiFrame
+from tools.pdf_to_txt_tool import PDFToTXTFrame
 
 class App(ctk.CTk):
     def __init__(self):
@@ -18,15 +21,29 @@ class App(ctk.CTk):
 
         self.tab_view.add("PDF Bölücü")
         self.tab_view.add("PDF Yeniden Adlandır")
-        self.tab_view.add("Eğitim Sertifikası Formatı")
-        self.tab_view.add("PDF to TXT")
+        self.tab_view.add("Eğitim Sertifikası Formatı") # Bu sekme adı zaten vardı
+        self.tab_view.add("PDF to TXT")               # Bu sekme adı zaten vardı
         self.tab_view.add("Yapım Aşamasında #1")
 
+        # PDF Bölücü
         self.pdf_splitter_frame = PDFSplitterFrame(master=self.tab_view.tab("PDF Bölücü"))
         self.pdf_splitter_frame.pack(fill="both", expand=True)
         
+        # PDF Yeniden Adlandır
         self.pdf_renamer_frame = PDFRenamerFrame(master=self.tab_view.tab("PDF Yeniden Adlandır"))
         self.pdf_renamer_frame.pack(fill="both", expand=True)
+        
+        # --- YENİ EKLENEN KISIMLAR ---
+        
+        # Eğitim Sertifikası
+        self.egitim_sertifikasi_frame = EgitimSertifikasiFrame(master=self.tab_view.tab("Eğitim Sertifikası Formatı"))
+        self.egitim_sertifikasi_frame.pack(fill="both", expand=True)
+        
+        # PDF to TXT
+        self.pdf_to_txt_frame = PDFToTXTFrame(master=self.tab_view.tab("PDF to TXT"))
+        self.pdf_to_txt_frame.pack(fill="both", expand=True)
+        
+        # --- YENİ EKLENEN KISIMLARIN SONU ---
         
         self.bottom_frame = ctk.CTkFrame(self.main_frame)
         self.bottom_frame.pack(side="bottom", fill="x", padx=20, pady=(0, 10))
@@ -45,3 +62,8 @@ class App(ctk.CTk):
             ctk.set_appearance_mode("Dark")
         else:
             ctk.set_appearance_mode("Light")
+
+# Bu kısım, eğer main.py yerine doğrudan bu dosyayı çalıştırıyorsanız gereklidir:
+# if __name__ == "__main__":
+#     app = App()
+#     app.mainloop()

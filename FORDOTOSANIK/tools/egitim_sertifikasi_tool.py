@@ -1,4 +1,4 @@
-import customtkinter as ctk
+﻿import customtkinter as ctk
 from tkinter import filedialog, messagebox
 import os
 import re
@@ -9,7 +9,7 @@ from pdf2image import convert_from_path
 from PIL import Image
 import sys
 
-class PDFRenamerFrame(ctk.CTkFrame):
+class EgitimSertifikasiFrame(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master, fg_color="transparent")
         
@@ -36,8 +36,8 @@ class PDFRenamerFrame(ctk.CTkFrame):
         self.info_textbox.pack(padx=10, pady=(10, 5), fill="x", expand=False) # expand=False ile yüksekliği sabit tutar
 
         bilgi_metni = """
-Bu araç, Genel formata özel olarak hazırlanmıştır Şuanda Test aşamasındadır. 
-Format şu şekildedir: TC/Sicil No/Ad Soyad farklı satırlarda olduğu durumlar için tasarlanmıştır.
+Bu araç, Eğitim sertifikası formatına özel olarak hazırlanmıştır Şuanda Test aşamasındadır. 
+Format mantığı şu şekildedir: TC/Sicil No aynı satırda bulunduğu için diğer araçtan ayrılmıştır.
 Yeni Dosya Adı Formatı listesinden istediğiniz adlandırma seçeneğini seçmeyi unutmayın.
 """
         # Metni ekle ve kutuyu salt okunur yap
@@ -74,8 +74,8 @@ Yeni Dosya Adı Formatı listesinden istediğiniz adlandırma seçeneğini seçm
         self.status_label = ctk.CTkLabel(self, text="Lütfen dosyaları seçin...")
         self.status_label.pack(pady=5, padx=10)
 
+
     def select_pdfs(self):
-        # (Bu fonksiyon değişmedi)
         self.selected_files = filedialog.askopenfilenames(title="İşlem Yapılacak PDF Dosyalarını Seçin", filetypes=[("PDF Dosyaları", "*.pdf")])
         if not self.selected_files:
             self.rename_button.configure(state="disabled")
@@ -244,10 +244,10 @@ Yeni Dosya Adı Formatı listesinden istediğiniz adlandırma seçeneğini seçm
 
 if __name__ == "__main__":
     app = ctk.CTk()
-    app.title("PDF Yeniden Adlandırma Aracı")
+    app.title("Egitim Sertifikasi Formati")
     app.geometry("500x400")
     
-    frame = PDFRenamerFrame(app)
+    frame = EgitimSertifikasiFrame(app)
     frame.pack(fill="both", expand=True)
     
     app.mainloop()

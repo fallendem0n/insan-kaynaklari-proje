@@ -10,6 +10,19 @@ class PDFSplitterFrame(ctk.CTkFrame):
         self.create_widgets()
 
     def create_widgets(self):
+        # --- YENİ EKLENEN BİLGİLENDİRME KUTUSU ---
+        self.info_textbox = ctk.CTkTextbox(self, height=50, wrap="word") 
+        self.info_textbox.pack(padx=10, pady=(10, 5), fill="x", expand=False) # expand=False ile yüksekliği sabit tutar
+
+        bilgi_metni = """
+        Bu araç, PDF Dosyalarını seçtiğiniz sayfa sayısında eşit parçalara böler.
+Genel amacı toplu taranan dosyaları daha yönetilebilir parçalara ayırmaktır.
+        """
+        # Metni ekle ve kutuyu salt okunur yap
+        self.info_textbox.configure(state="normal")
+        self.info_textbox.insert("1.0", bilgi_metni.strip())
+        self.info_textbox.configure(state="disabled")
+        # --- YENİ KUTU SONU ---
         main_frame = ctk.CTkFrame(self, corner_radius=10)
         main_frame.pack(pady=20, padx=20, fill="both", expand=True)
         title_label = ctk.CTkLabel(main_frame, text="PDF Sayfa Bölme Aracı", font=ctk.CTkFont(size=20, weight="bold"))

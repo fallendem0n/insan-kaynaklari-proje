@@ -23,8 +23,10 @@
   <ItemGroup>
     <Compile Include="gui_manager.py" />
     <Compile Include="main.py" />
+    <Compile Include="tools\egitim_sertifikasi_tool.py" />
     <Compile Include="tools\pdf_renamer_tool.py" />
     <Compile Include="tools\pdf_splitter_tool.py" />
+    <Compile Include="tools\pdf_to_txt_tool.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="tools\" />
