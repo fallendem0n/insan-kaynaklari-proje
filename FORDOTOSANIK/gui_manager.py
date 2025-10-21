@@ -1,10 +1,12 @@
 ﻿import customtkinter as ctk
 import os
-import json # json modülünü import edin
+import json 
 from tools.pdf_splitter_tool import PDFSplitterFrame
 from tools.pdf_renamer_tool import PDFRenamerFrame
 from tools.egitim_sertifikasi_tool import EgitimSertifikasiFrame
 from tools.pdf_to_txt_tool import PDFToTXTFrame
+from tools.pdf_to_txt_tool import PDFToTXTFrame
+from tools.mail_merger_tool import MailMergerFrame  # <-- 
 
 class App(ctk.CTk):
     def __init__(self):
@@ -86,6 +88,9 @@ class App(ctk.CTk):
 
         self.pdf_to_txt_frame = PDFToTXTFrame(master=self.tab_view.tab("PDF to TXT"))
         self.pdf_to_txt_frame.pack(fill="both", expand=True)
+
+        self.mail_merger_frame = MailMergerFrame(master=self.tab_view.tab("Merge(BAKIMDA)"))
+        self.mail_merger_frame.pack(fill="both", expand=True)
 
         # --- ALT KISIM (TEMA DEĞİŞTİRME BUTONU) ---
         self.bottom_frame = ctk.CTkFrame(self.main_frame)
