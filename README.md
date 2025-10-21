@@ -18,3 +18,4 @@ pip install pytesseract
 pip install pillow 
 pip install pdf2image 
 pip install auto-py-to-exe
+pip install docx-mailmerge pandas openpyxl
