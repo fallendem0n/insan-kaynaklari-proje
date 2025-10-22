@@ -6,43 +6,37 @@ from tools.pdf_renamer_tool import PDFRenamerFrame
 from tools.egitim_sertifikasi_tool import EgitimSertifikasiFrame
 from tools.pdf_to_txt_tool import PDFToTXTFrame
 from tools.pdf_to_txt_tool import PDFToTXTFrame
-from tools.mail_merger_tool import MailMergerFrame  # <-- 
+from tools.mail_merger_tool import MailMergerFrame  
 
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        # --- TEMA YÜKLEME (GÜNCELLENMİŞ KISIM) ---
-        theme_path = None # Başlangıçta None yapalım
+        theme_path = None 
         try:
             script_dir = os.path.dirname(os.path.abspath(__file__))
             theme_path = os.path.join(script_dir, "modern_theme.json")
 
-            # 1. Dosyanın var olup olmadığını ve boş olup olmadığını kontrol et
             if not os.path.exists(theme_path):
                 print(f"HATA: Tema dosyası bulunamadı: {theme_path}")
-                theme_path = None # Hata durumunda yolu sıfırla
+                theme_path = None 
             elif os.path.getsize(theme_path) == 0:
                 print(f"HATA: Tema dosyası boş: {theme_path}")
-                theme_path = None # Hata durumunda yolu sıfırla
+                theme_path = None 
             else:
-                # 2. Dosyayı Python'un json modülü ile okumayı dene (UTF-8 olarak)
                 try:
                     with open(theme_path, 'r', encoding='utf-8') as f:
                         theme_data = json.load(f)
                         print(f"Tema dosyası başarıyla okundu: {theme_path}")
-                        # (Opsiyonel) Okunan verinin küçük bir kısmını yazdırabiliriz:
-                        # print("Okunan tema verisi (başlangıç):", str(theme_data)[:100])
                 except json.JSONDecodeError as e:
                     print(f"HATA: Tema dosyası okunurken JSON hatası oluştu: {theme_path}")
                     print(f"Hata Detayı: {e}")
-                    theme_path = None # Hata durumunda yolu sıfırla
+                    theme_path = None 
                 except Exception as e:
                     print(f"HATA: Tema dosyası okunurken genel bir hata oluştu: {theme_path}")
                     print(f"Hata Detayı: {e}")
-                    theme_path = None # Hata durumunda yolu sıfırla
+                    theme_path = None 
 
-            # 3. CustomTkinter'a temayı ayarla (eğer bir hata oluşmadıysa)
             if theme_path:
                 ctk.set_default_color_theme(theme_path)
                 print("CustomTkinter teması ayarlandı.")
@@ -54,16 +48,13 @@ class App(ctk.CTk):
             print(f"Tema yükleme sırasında beklenmedik bir hata oluştu: {e}")
             print("Varsayılan 'blue' teması kullanılıyor.")
             ctk.set_default_color_theme("blue")
-        # --- GÜNCELLENMİŞ KISIM SONU ---
 
 
         self.title("Ofis Yardımcısı")
         self.geometry("1000x775")
 
-        # Görünüm modu (Tema renginden ayrıdır)
-        ctk.set_appearance_mode("Dark") # Veya "Light"
+        ctk.set_appearance_mode("Dark")
 
-        # --- ARAYÜZ OLUŞTURMA ---
         self.main_frame = ctk.CTkFrame(self, fg_color="transparent")
         self.main_frame.pack(fill="both", expand=True)
 
@@ -76,7 +67,6 @@ class App(ctk.CTk):
         self.tab_view.add("PDF to TXT")
         self.tab_view.add("Merge Oluşturucu")
 
-        # Sekme içeriklerini oluştur ve yerleştir
         self.pdf_splitter_frame = PDFSplitterFrame(master=self.tab_view.tab("PDF Bölücü"))
         self.pdf_splitter_frame.pack(fill="both", expand=True)
 
@@ -92,7 +82,6 @@ class App(ctk.CTk):
         self.mail_merger_frame = MailMergerFrame(master=self.tab_view.tab("Merge Oluşturucu"))
         self.mail_merger_frame.pack(fill="both", expand=True)
 
-        # --- ALT KISIM (TEMA DEĞİŞTİRME BUTONU) ---
         self.bottom_frame = ctk.CTkFrame(self.main_frame)
         self.bottom_frame.pack(side="bottom", fill="x", padx=20, pady=(0, 10))
 
@@ -103,20 +92,13 @@ class App(ctk.CTk):
         )
         self.theme_switch.pack(side="right", padx=10, pady=5)
 
-        # Başlangıçta tema anahtarını mevcut moda göre ayarla
         if ctk.get_appearance_mode() == "Dark":
             self.theme_switch.select()
         else:
             self.theme_switch.deselect()
 
     def toggle_theme(self):
-        # Görünüm modunu değiştir
         if self.theme_switch.get() == 1:
             ctk.set_appearance_mode("Dark")
         else:
             ctk.set_appearance_mode("Light")
-
-# Uygulamayı başlatmak için (genellikle main.py içinde yapılır)
-# if __name__ == "__main__":
-#     app = App()
-#     app.mainloop()

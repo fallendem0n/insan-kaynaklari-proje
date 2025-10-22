@@ -30,24 +30,20 @@ class EgitimSertifikasiFrame(ctk.CTkFrame):
         self.selected_files = []
 
     def create_widgets(self):
-        
-        # --- YENİ EKLENEN BİLGİLENDİRME KUTUSU ---
+
         self.info_textbox = ctk.CTkTextbox(self, height=87, wrap="word") 
-        self.info_textbox.pack(padx=10, pady=(10, 5), fill="x", expand=False) # expand=False ile yüksekliği sabit tutar
+        self.info_textbox.pack(padx=10, pady=(10, 5), fill="x", expand=False) 
 
         bilgi_metni = """
 Bu araç, Eğitim sertifikası formatına özel olarak hazırlanmıştır Şuanda Test aşamasındadır. 
 Format mantığı şu şekildedir: TC/Sicil No aynı satırda bulunduğu için diğer araçtan ayrılmıştır.
 Yeni Dosya Adı Formatı listesinden istediğiniz adlandırma seçeneğini seçmeyi unutmayın.
 """
-        # Metni ekle ve kutuyu salt okunur yap
         self.info_textbox.configure(state="normal")
         self.info_textbox.insert("1.0", bilgi_metni.strip())
         self.info_textbox.configure(state="disabled")
-        # --- YENİ KUTU SONU ---
 
         file_frame = ctk.CTkFrame(self)
-        # Bilgi kutusu eklendiği için üstteki pady'yi azalttık
         file_frame.pack(padx=10, pady=(5, 10), fill="x") 
         select_button = ctk.CTkButton(file_frame, text="PDF Dosyaları Seç", command=self.select_pdfs)
         select_button.pack(pady=10, padx=10)
@@ -97,9 +93,7 @@ Yeni Dosya Adı Formatı listesinden istediğiniz adlandırma seçeneğini seçm
         ]
         
         adsoyad_patterns = [
-    # Bu desen artık "İŞYERİ" şartı olmadan "AD SOYAD" etiketinden sonraki ismi arar.
             re.compile(r'AD SOYAD\s+([A-ZÇĞİÖŞÜ\s]+)', re.IGNORECASE),
-    # Bu desen "Adı / Soyadı" gibi formatlar için çalışmaya devam eder.
             re.compile(r'^(?:Ad Soyad|Adı\s*/\s*Soyadı)\s*[:\-]\s*([^\n\r]+)', re.IGNORECASE | re.MULTILINE)
         ]
 
@@ -129,13 +123,12 @@ Yeni Dosya Adı Formatı listesinden istediğiniz adlandırma seçeneğini seçm
                 
         return info
 
-    # --- YENİ ve EN KARARLI YÖN BULMA FONKSİYONU ---
     def ocr_with_orientation_check(self, image):
         """
         Bir resmi 4 farklı açıda (0, 90, 180, 270) OCR'dan geçirir ve
         içinde anahtar kelimeler bulunan ilk anlamlı metni döndürür.
         """
-        angles = [0, 270, 180, 90]  # Denenecek açılar
+        angles = [0, 270, 180, 90]  
         keywords = ["Ad", "Soyad", "Kimlik", "T.C", "İŞYERİ", "Sicil"]
         
         best_text = ""
@@ -149,21 +142,19 @@ Yeni Dosya Adı Formatı listesinden istediğiniz adlandırma seçeneğini seçm
                 
                 text = pytesseract.image_to_string(rotated_image, lang='tur', config='--psm 6')
                 
-                # İlk denemede (0 derece) metni varsayılan olarak ayarla
                 if angle == 0:
                     best_text = text
 
-                # Metnin içinde anahtar kelimeler var mı diye kontrol et
                 for key in keywords:
                     if re.search(key, text, re.IGNORECASE):
                         print(f"Anlamlı metin {angle} derece açıda bulundu.")
-                        return text # Anlamlı metin bulununca hemen döndür
+                        return text 
             except Exception as e:
                 print(f"{angle} derece denenirken hata: {e}")
-                continue # Hata olursa bir sonraki açıya geç
+                continue 
         
         print("Anahtar kelime bulunamadı, en iyi tahmin kullanılıyor.")
-        return best_text # Hiçbir şey bulunamazsa 0 derecedeki sonucu döndür
+        return best_text 
 
     def extract_info_from_pdf(self, pdf_path):
         info = {'TC': 'TC-YOK', 'ADSOYAD': 'ISIM-YOK', 'SICIL': 'SICIL-YOK'}
@@ -182,7 +173,6 @@ Yeni Dosya Adı Formatı listesinden istediğiniz adlandırma seçeneğini seçm
             try:
                 images = convert_from_path(pdf_path, poppler_path=self.poppler_path, first_page=1, last_page=1, dpi=300)
                 if images:
-                    # --- GÜNCELLENEN KISIM: Yeni ve kararlı yön bulma fonksiyonu çağrılıyor ---
                     text_from_ocr = self.ocr_with_orientation_check(images[0])
                     print(f"--- OCR Sonucu ({os.path.basename(pdf_path)}): ---\n{text_from_ocr}\n--------------------")
                     
@@ -198,14 +188,12 @@ Yeni Dosya Adı Formatı listesinden istediğiniz adlandırma seçeneğini seçm
         return info
 
     def start_rename_thread(self):
-        # (Bu fonksiyon değişmedi)
         self.rename_button.configure(state="disabled")
         self.progress_bar.set(0)
         thread = Thread(target=self.rename_process)
         thread.start()
 
     def rename_process(self):
-        # (Bu fonksiyon değişmedi)
         name_format = self.format_combo.get()
         total_files = len(self.selected_files)
         processed_count = 0

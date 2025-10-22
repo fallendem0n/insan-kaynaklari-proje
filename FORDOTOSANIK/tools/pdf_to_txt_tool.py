@@ -1,19 +1,15 @@
-﻿# tools/pdf_to_txt_tool.py
-import customtkinter as ctk
+﻿import customtkinter as ctk
 from tkinter import filedialog
 import os
 import threading
 
-# Gerekli kütüphaneler
 try:
     from PyPDF2 import PdfReader
 except ImportError:
-    # Kullanıcı pypdf dediyse, PyPDF2'nin yeni adı olabilir
     try:
         from pypdf import PdfReader
     except ImportError:
         print("PyPDF2/pypdf kütüphanesi bulunamadı.")
-        # Burada kullanıcıya bir hata mesajı gösterebilirsiniz
         PdfReader = None 
 
 try:
@@ -29,22 +25,17 @@ class PDFToTXTFrame(ctk.CTkFrame):
     def __init__(self, master=None):
         super().__init__(master)
 
-        # --- Tesseract ve Poppler Yolları ---
-        # Proje ana dizinini bul (bu dosyanın 'tools' klasöründe olduğunu varsayarak)
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         
-        # Tesseract OCR yolunu ayarla
         tesseract_path = os.path.join(base_dir, "tesseract", "tesseract.exe")
         if pytesseract and os.path.exists(tesseract_path):
             pytesseract.pytesseract.tesseract_cmd = tesseract_path
         elif pytesseract:
             print(f"Uyarı: Tesseract yolu bulunamadı: {tesseract_path}")
 
-        # Poppler (pdf2image için) 'bin' klasörünün yolunu ayarla
         self.poppler_path = os.path.join(base_dir, "poppler", "Library", "bin")
         if not os.path.exists(self.poppler_path):
              print(f"Uyarı: Poppler yolu bulunamadı: {self.poppler_path}")
-        # ------------------------------------
 
         self.grid_columnconfigure(0, weight=1)
         
@@ -57,7 +48,6 @@ class PDFToTXTFrame(ctk.CTkFrame):
         self.select_file_button = ctk.CTkButton(self, text="PDF Dosyası Seç", command=self.select_pdf)
         self.select_file_button.grid(row=2, column=0, padx=20, pady=10)
 
-        # OCR Kullanımı için Checkbox
         self.ocr_var = ctk.StringVar(value="on")
         self.ocr_check = ctk.CTkCheckBox(self, text="Gerekirse OCR kullan (Açık kalması önerilir.)", variable=self.ocr_var, onvalue="on", offvalue="off")
         self.ocr_check.grid(row=3, column=0, padx=20, pady=5, sticky="w")
@@ -94,21 +84,18 @@ class PDFToTXTFrame(ctk.CTkFrame):
             self.status_label.configure(text="Lütfen önce bir PDF dosyası seçin.", text_color="orange")
             return
             
-        # Butonları devre dışı bırak ve durumu bildir
         self.convert_button.configure(state="disabled")
         self.select_file_button.configure(state="disabled")
         self.status_label.configure(text="Dönüştürme işlemi sürüyor, lütfen bekleyin...", text_color="cyan")
 
-        # Thread'i başlat
         conversion_thread = threading.Thread(target=self.convert_to_txt)
-        conversion_thread.daemon = True # Ana program kapanınca thread'in de kapanmasını sağlar
+        conversion_thread.daemon = True 
         conversion_thread.start()
 
     def convert_to_txt(self):
         try:
             full_text = ""
             
-            # 1. Yöntem: PyPDF2 ile metin tabanlı çıkarmayı dene
             if PdfReader:
                 try:
                     reader = PdfReader(self.selected_pdf_path)
@@ -118,10 +105,8 @@ class PDFToTXTFrame(ctk.CTkFrame):
                             full_text += extracted + "\n"
                 except Exception as e:
                     print(f"PyPDF2 hatası: {e}")
-                    full_text = "" # Hata olursa OCR'a güven
+                    full_text = "" 
 
-            # 2. Yöntem: OCR (Eğer metin boşsa veya checkbox seçiliyse)
-            # (Basit bir kontrol: 1KB'dan az metin çıktıysa OCR'ı zorla)
             use_ocr = self.ocr_var.get() == "on"
             if use_ocr and (not full_text or len(full_text) < 1024):
                 if not pytesseract or not convert_from_path:
@@ -132,21 +117,18 @@ class PDFToTXTFrame(ctk.CTkFrame):
                 self.status_label.configure(text="Metin bulunamadı, OCR deneniyor...", text_color="cyan")
                 
                 try:
-                    # PDF'i resimlere dönüştür
                     images = convert_from_path(
                         self.selected_pdf_path,
                         poppler_path=self.poppler_path
                     )
                     
-                    full_text = "" # OCR sonucunu temiz bir şekilde başlat
+                    full_text = "" 
                     for i, img in enumerate(images):
                         self.status_label.configure(text=f"OCR Sayfa {i+1}/{len(images)} işleniyor...", text_color="cyan")
-                        # Tesseract ile Türkçe ve İngilizce dillerini kullanarak metni çıkar
                         text = pytesseract.image_to_string(img, lang='tur+eng')
                         full_text += text + "\n\n"
                         
                 except Exception as ocr_error:
-                    # Poppler hatası veya Tesseract hatası
                     self.status_label.configure(text=f"OCR Hatası: {ocr_error}", text_color="red")
                     print(f"OCR Hatası: {ocr_error}")
                     self.ui_reset()
@@ -157,7 +139,6 @@ class PDFToTXTFrame(ctk.CTkFrame):
                 self.ui_reset()
                 return
 
-            # Metni TXT dosyasına kaydet
             output_path = os.path.splitext(self.selected_pdf_path)[0] + ".txt"
             with open(output_path, "w", encoding="utf-8") as f:
                 f.write(full_text)
@@ -169,7 +150,6 @@ class PDFToTXTFrame(ctk.CTkFrame):
             print(f"Hata: {e}")
             
         finally:
-            # İşlem bitince butonları tekrar aktif et
             self.ui_reset()
 
     def ui_reset(self):
