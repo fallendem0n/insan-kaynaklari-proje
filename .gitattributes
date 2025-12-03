@@ -17,10 +17,10 @@
 *.py linguist-language=Python
 
 # Ignore build artifacts and external tools from stats
-build/ linguist-vendored
-dist/ linguist-vendored
-FORDOTOSANIK/build/ linguist-vendored
-FORDOTOSANIK/dist/ linguist-vendored
-FORDOTOSANIK/poppler/ linguist-vendored
-FORDOTOSANIK/tesseract/ linguist-vendored
-FORDOTOSANIK/templates/ linguist-vendored
+build/** linguist-vendored
+dist/** linguist-vendored
+FORDOTOSANIK/build/** linguist-vendored
+FORDOTOSANIK/dist/** linguist-vendored
+FORDOTOSANIK/poppler/** linguist-vendored
+FORDOTOSANIK/tesseract/** linguist-vendored
+FORDOTOSANIK/templates/** linguist-vendored
