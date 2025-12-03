@@ -5,27 +5,31 @@ import sys
 from PIL import Image, ImageTk
 from utils.template_manager import TemplateManager
 
+# ocr kütüphanelerini yüklemeye çalışıyoruz
 try:
     import pytesseract
     from pdf2image import convert_from_path
 except ImportError:
+    # eğer yüklü değilse none yapıyoruz
     pytesseract = None
     convert_from_path = None
 
+# görsel şablon oluşturma aracı sınıfı
 class VisualTemplateFrame(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master, fg_color="transparent")
         
+        # değişkenleri tanımlıyoruz
         self.pdf_path = None
         self.image = None
         self.tk_image = None
         self.rect_start_x = None
         self.rect_start_y = None
         self.current_rect = None
-        self.fields = [] # List of {'name', 'rect_id', 'x', 'y', 'w', 'h'}
+        self.fields = [] # alan listesi: {'name', 'rect_id', 'x', 'y', 'w', 'h'}
         self.scale_factor = 1.0
         
-        # Paths
+        # yolları ayarlıyoruz
         if getattr(sys, 'frozen', False):
             application_path = os.path.dirname(sys.executable)
         else:
@@ -33,20 +37,22 @@ class VisualTemplateFrame(ctk.CTkFrame):
         self.poppler_path = os.path.join(application_path, 'poppler', 'Library', 'bin')
         self.tesseract_path = os.path.join(application_path, 'tesseract', 'tesseract.exe')
         
+        # tesseract yolunu ayarlıyoruz
         if pytesseract:
             try:
                 pytesseract.pytesseract.tesseract_cmd = self.tesseract_path
             except Exception:
                 pass
 
+        # arayüzü oluşturuyoruz
         self.create_widgets()
 
     def create_widgets(self):
-        # Layout: Left sidebar (controls), Right (Canvas)
+        # düzen: sol taraf (kontroller), sağ taraf (tuval)
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
         
-        # --- Sidebar ---
+        # --- sol menü ---
         sidebar = ctk.CTkFrame(self, width=250)
         sidebar.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
         sidebar.grid_propagate(False)
@@ -71,11 +77,11 @@ class VisualTemplateFrame(ctk.CTkFrame):
         info_text = "1. PDF yükleyin.\n2. Mouse ile alan seçin.\n3. Alana isim verin.\n4. Şablonu kaydedin."
         ctk.CTkLabel(sidebar, text=info_text, justify="left", text_color="gray", font=ctk.CTkFont(size=11)).pack(pady=5, padx=10)
 
-        # --- Canvas Area ---
+        # --- tuval alanı ---
         canvas_frame = ctk.CTkFrame(self)
         canvas_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
         
-        # Scrollbars for canvas
+        # kaydırma çubukları
         v_scroll = ctk.CTkScrollbar(canvas_frame, orientation="vertical")
         h_scroll = ctk.CTkScrollbar(canvas_frame, orientation="horizontal")
         
@@ -89,11 +95,12 @@ class VisualTemplateFrame(ctk.CTkFrame):
         h_scroll.pack(side="bottom", fill="x")
         self.canvas.pack(side="left", fill="both", expand=True)
         
-        # Bind events
+        # fare olaylarını bağlıyoruz
         self.canvas.bind("<Button-1>", self.on_mouse_down)
         self.canvas.bind("<B1-Motion>", self.on_mouse_drag)
         self.canvas.bind("<ButtonRelease-1>", self.on_mouse_up)
 
+    # pdf yükleme işlemi
     def load_pdf(self):
         file_path = filedialog.askopenfilename(filetypes=[("PDF Dosyaları", "*.pdf")])
         if not file_path:
@@ -104,6 +111,7 @@ class VisualTemplateFrame(ctk.CTkFrame):
                 messagebox.showerror("Hata", "pdf2image kütüphanesi eksik.")
                 return
 
+            # pdf'in ilk sayfasını resme çeviriyoruz
             images = convert_from_path(file_path, poppler_path=self.poppler_path, first_page=1, last_page=1)
             if images:
                 self.pdf_path = file_path
@@ -112,27 +120,26 @@ class VisualTemplateFrame(ctk.CTkFrame):
                 self.fields = []
                 self.refresh_fields_list()
                 self.canvas.delete("all")
-                self.display_image() # Redraw image
+                self.display_image() # resmi tekrar çiziyoruz
         except Exception as e:
             messagebox.showerror("Hata", f"PDF yüklenirken hata: {e}")
 
+    # resmi ekranda gösterme
     def display_image(self):
         if not self.image:
             return
             
-        # Resize if too large to fit comfortably? No, let's keep original resolution for accuracy, but maybe scrollable.
-        # Actually, displaying full res might be too big. Let's scale down for display but keep coords relative.
-        
-        # For now, let's just display as is.
+        # şimdilik resmi olduğu gibi gösteriyoruz
         self.tk_image = ImageTk.PhotoImage(self.image)
         
         self.canvas.config(scrollregion=(0, 0, self.image.width, self.image.height))
         self.canvas.create_image(0, 0, image=self.tk_image, anchor="nw")
 
+    # fare tıklandığında (seçim başlangıcı)
     def on_mouse_down(self, event):
         if not self.image:
             return
-        # Account for scrolling
+        # kaydırmayı hesaba katıyoruz
         self.rect_start_x = self.canvas.canvasx(event.x)
         self.rect_start_y = self.canvas.canvasy(event.y)
         self.current_rect = self.canvas.create_rectangle(
@@ -140,6 +147,7 @@ class VisualTemplateFrame(ctk.CTkFrame):
             outline="red", width=2
         )
 
+    # fare sürüklendiğinde (seçim devamı)
     def on_mouse_drag(self, event):
         if not self.current_rect:
             return
@@ -147,6 +155,7 @@ class VisualTemplateFrame(ctk.CTkFrame):
         cur_y = self.canvas.canvasy(event.y)
         self.canvas.coords(self.current_rect, self.rect_start_x, self.rect_start_y, cur_x, cur_y)
 
+    # fare bırakıldığında (seçim bitişi)
     def on_mouse_up(self, event):
         if not self.current_rect:
             return
@@ -154,24 +163,24 @@ class VisualTemplateFrame(ctk.CTkFrame):
         cur_x = self.canvas.canvasx(event.x)
         cur_y = self.canvas.canvasy(event.y)
         
-        # Normalize coords (x1 < x2, y1 < y2)
+        # koordinatları normalize ediyoruz (x1 < x2, y1 < y2)
         x1, x2 = sorted([self.rect_start_x, cur_x])
         y1, y2 = sorted([self.rect_start_y, cur_y])
         
         w = x2 - x1
         h = y2 - y1
         
-        if w < 5 or h < 5: # Too small
+        if w < 5 or h < 5: # çok küçükse iptal et
             self.canvas.delete(self.current_rect)
             self.current_rect = None
             return
             
-        # Ask for name
+        # kullanıcıdan alan adı istiyoruz
         dialog = ctk.CTkInputDialog(text="Alan Adı:", title="Alan Tanımla")
         name = dialog.get_input()
         
         if name:
-            # Save field
+            # alanı kaydediyoruz
             field = {
                 'name': name,
                 'rect_id': self.current_rect,
@@ -182,7 +191,7 @@ class VisualTemplateFrame(ctk.CTkFrame):
             }
             self.fields.append(field)
             
-            # Draw permanent rect with label
+            # kalıcı dikdörtgen ve etiket çiziyoruz
             self.canvas.create_text(x1, y1-10, text=name, fill="red", anchor="sw")
             self.refresh_fields_list()
         else:
@@ -190,6 +199,7 @@ class VisualTemplateFrame(ctk.CTkFrame):
             
         self.current_rect = None
 
+    # alan listesini yenileme
     def refresh_fields_list(self):
         for widget in self.fields_frame.winfo_children():
             widget.destroy()
@@ -204,12 +214,11 @@ class VisualTemplateFrame(ctk.CTkFrame):
                                   command=lambda idx=i: self.delete_field(idx))
             del_btn.pack(side="right", padx=5)
 
+    # alan silme
     def delete_field(self, index):
         field = self.fields.pop(index)
         self.canvas.delete(field['rect_id'])
-        # Also delete text label? We didn't save its ID. 
-        # For simplicity, let's just redraw everything or ignore the text label (it will stay until refresh).
-        # Better: redraw all fields.
+        # tüm çizimleri temizleyip tekrar çiziyoruz
         self.canvas.delete("all")
         self.display_image()
         for f in self.fields:
@@ -219,6 +228,7 @@ class VisualTemplateFrame(ctk.CTkFrame):
             
         self.refresh_fields_list()
 
+    # ocr testi yapma
     def test_ocr(self):
         if not self.image:
             messagebox.showwarning("Uyarı", "Lütfen önce bir PDF yükleyin.")
@@ -228,8 +238,7 @@ class VisualTemplateFrame(ctk.CTkFrame):
             messagebox.showwarning("Uyarı", "Lütfen test etmek için en az bir alan seçin.")
             return
             
-        # Test the last added field or selected field? 
-        # For simplicity, let's test the last added field since we don't have selection logic for list items yet.
+        # son eklenen alanı test ediyoruz
         field = self.fields[-1]
         
         try:
@@ -239,6 +248,7 @@ class VisualTemplateFrame(ctk.CTkFrame):
         except Exception as e:
             messagebox.showerror("Hata", f"OCR Hatası: {e}")
 
+    # şablonu kaydetme
     def save_template(self):
         name = self.template_name_entry.get().strip()
         if not name:
@@ -249,7 +259,7 @@ class VisualTemplateFrame(ctk.CTkFrame):
             messagebox.showwarning("Uyarı", "Lütfen en az bir alan tanımlayın.")
             return
             
-        # Add page dimensions to fields for scaling later
+        # sayfa boyutlarını ekliyoruz (ölçekleme için)
         page_w = self.image.width
         page_h = self.image.height
         

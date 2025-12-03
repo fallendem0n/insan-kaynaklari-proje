@@ -6,19 +6,23 @@ import os
 import re 
 import traceback 
 
+# word taslak oluşturucu aracı sınıfı
 class MailMergerFrame(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
 
+        # gerekli değişkenleri tanımlıyoruz
         self.excel_path = None
         self.word_path = None
         self.excel_columns = []
         self.placeholders = [] 
         self.naming_columns = [] 
 
+        # arayüzü oluşturuyoruz
         self.create_widgets()
 
     def create_widgets(self):
+        # bilgi metni kutusu
         self.info_textbox = ctk.CTkTextbox(self, height=100, wrap="word")
         self.info_textbox.pack(padx=10, pady=(10, 5), fill="x", expand=False)
 
@@ -35,12 +39,15 @@ Bu araç, bir Excel veri dosyasındaki bilgileri bir Word şablonuna yerleştiri
         self.info_textbox.insert("1.0", bilgi_metni.strip())
         self.info_textbox.configure(state="disabled")
 
+        # ana çerçeve
         main_frame = ctk.CTkFrame(self, corner_radius=10)
         main_frame.pack(pady=10, padx=20, fill="both", expand=True)
 
+        # başlık
         title_label = ctk.CTkLabel(main_frame, text="Word Taslak Oluşturucu", font=ctk.CTkFont(size=20, weight="bold"))
         title_label.pack(pady=(10, 10))
 
+        # excel dosyası seçimi
         excel_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
         excel_frame.pack(pady=5, padx=10, fill="x")
 
@@ -50,6 +57,7 @@ Bu araç, bir Excel veri dosyasındaki bilgileri bir Word şablonuna yerleştiri
         self.excel_label = ctk.CTkLabel(excel_frame, text="Veri dosyası seçilmedi...", text_color="gray")
         self.excel_label.pack(side="left", fill="x", expand=True)
 
+        # word dosyası seçimi
         word_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
         word_frame.pack(pady=5, padx=10, fill="x")
 
@@ -59,9 +67,11 @@ Bu araç, bir Excel veri dosyasındaki bilgileri bir Word şablonuna yerleştiri
         self.word_label = ctk.CTkLabel(word_frame, text="Şablon dosyası seçilmedi...", text_color="gray")
         self.word_label.pack(side="left", fill="x", expand=True)
 
+        # kontrol butonu
         self.check_files_button = ctk.CTkButton(main_frame, text="3. Dosyaları Kontrol Et ve Alanları Eşleştir", command=self.check_files, state="disabled")
         self.check_files_button.pack(pady=(10, 5), padx=10, fill="x")
 
+        # isimlendirme seçimi
         naming_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
         naming_frame.pack(pady=5, padx=10, fill="x")
 
@@ -71,6 +81,7 @@ Bu araç, bir Excel veri dosyasındaki bilgileri bir Word şablonuna yerleştiri
         self.naming_label = ctk.CTkLabel(naming_frame, text="İsimlendirme sütunları seçilmedi...", text_color="gray")
         self.naming_label.pack(side="left", fill="x", expand=True)
 
+        # alanları gösterme kutuları
         fields_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
         fields_frame.pack(pady=5, padx=10, fill="both", expand=True)
 
@@ -90,12 +101,15 @@ Bu araç, bir Excel veri dosyasındaki bilgileri bir Word şablonuna yerleştiri
         self.excel_cols_textbox.configure(state="disabled")
         self.word_fields_textbox.configure(state="disabled")
 
+        # işlem başlatma butonu
         self.process_button = ctk.CTkButton(main_frame, text="5. Taslakları Oluştur", height=40, command=self.process_creation, state="disabled")
         self.process_button.pack(pady=(10, 10), padx=10, fill="x")
 
+        # durum etiketi
         self.status_label = ctk.CTkLabel(main_frame, text="", font=ctk.CTkFont(size=12))
         self.status_label.pack(pady=(0, 10))
 
+    # excel dosyası seçme işlemi
     def select_excel(self):
         file_path = filedialog.askopenfilename(
             title="Excel Veri Dosyasını Seçin",
@@ -114,7 +128,7 @@ Bu araç, bir Excel veri dosyasındaki bilgileri bir Word şablonuna yerleştiri
             self.excel_cols_textbox.delete("1.0", "end")
             self.excel_cols_textbox.configure(state="disabled")
 
-
+    # word şablon dosyası seçme işlemi
     def select_word(self):
         file_path = filedialog.askopenfilename(
             title="Word Şablon Dosyasını Seçin",
@@ -133,17 +147,21 @@ Bu araç, bir Excel veri dosyasındaki bilgileri bir Word şablonuna yerleştiri
             self.word_fields_textbox.delete("1.0", "end")
             self.word_fields_textbox.configure(state="disabled")
 
+    # kontrol butonunun durumunu güncelleme
     def update_check_button_state(self):
         if self.excel_path and self.word_path:
             self.check_files_button.configure(state="normal")
         else:
             self.check_files_button.configure(state="disabled")
 
+    # word belgesindeki yer tutucuları bulma
     def find_placeholders(self, document):
         placeholders = set()
+        # paragrafları tarıyoruz
         for para in document.paragraphs:
             found = re.findall(r"\{\{([^}]+)\}\}", para.text)
             placeholders.update(found) 
+        # tabloları tarıyoruz
         for table in document.tables:
             for row in table.rows:
                 for cell in row.cells:
@@ -152,11 +170,13 @@ Bu araç, bir Excel veri dosyasındaki bilgileri bir Word şablonuna yerleştiri
                         placeholders.update(found)
         return sorted(list(placeholders)) 
 
+    # dosyaları kontrol etme ve eşleştirme
     def check_files(self):
         self.status_label.configure(text="Dosyalar kontrol ediliyor...", text_color="yellow")
         self.process_button.configure(state="disabled")
         self.select_naming_button.configure(state="disabled") 
         try:
+            # excel başlıklarını okuyoruz
             df = pd.read_excel(self.excel_path, nrows=0) 
             self.excel_columns = sorted([str(col) for col in df.columns])
 
@@ -165,6 +185,7 @@ Bu araç, bir Excel veri dosyasındaki bilgileri bir Word şablonuna yerleştiri
             self.excel_cols_textbox.insert("1.0", "\n".join(self.excel_columns))
             self.excel_cols_textbox.configure(state="disabled")
 
+            # word yer tutucularını buluyoruz
             doc = docx.Document(self.word_path)
             self.placeholders = self.find_placeholders(doc)
 
@@ -178,6 +199,7 @@ Bu araç, bir Excel veri dosyasındaki bilgileri bir Word şablonuna yerleştiri
                 messagebox.showerror("Hata", "Word şablonunda hiç {{...}} formatında yer tutucu bulunamadı.")
                 return
 
+            # eşleşmeleri kontrol ediyoruz
             excel_set = set(self.excel_columns)
             word_set = set(self.placeholders)
             matches = excel_set.intersection(word_set)
@@ -209,6 +231,7 @@ Bu araç, bir Excel veri dosyasındaki bilgileri bir Word şablonuna yerleştiri
             traceback.print_exc() 
             self.select_naming_button.configure(state="disabled") 
 
+    # dosya adı için sütun seçme penceresi
     def select_naming_columns(self):
         if not self.excel_columns:
             messagebox.showerror("Hata", "Önce Excel dosyasını seçip kontrol etmelisin.")
@@ -268,6 +291,7 @@ Bu araç, bir Excel veri dosyasındaki bilgileri bir Word şablonuna yerleştiri
         cancel_button = ctk.CTkButton(button_frame, text="İptal", command=dialog.destroy, fg_color="gray")
         cancel_button.pack(side="right", padx=5)
 
+    # paragraf içindeki metni değiştirme fonksiyonu
     def replace_text_in_paragraph(self, paragraph, replacements):
         for key, value in replacements.items():
             placeholder = "{{" + key + "}}"
@@ -277,12 +301,13 @@ Bu araç, bir Excel veri dosyasındaki bilgileri bir Word şablonuna yerleştiri
                 inline = paragraph.runs
                 full_text = "".join(r.text for r in inline)
                 new_text = full_text.replace(placeholder, replacement_value)
+                # eski içeriği temizleyip yenisini ekliyoruz
                 for i in range(len(inline)):
                     p = paragraph._p
                     p.remove(inline[i]._r)
                 paragraph.add_run(new_text)
 
-
+    # taslak oluşturma işlemini başlatma
     def process_creation(self):
         if not self.excel_path or not self.word_path:
             messagebox.showerror("Hata", "Lütfen önce Excel ve Word dosyalarını seçin.")
@@ -318,9 +343,11 @@ Bu araç, bir Excel veri dosyasındaki bilgileri bir Word şablonuna yerleştiri
 
                 replacements = {col: row[col] for col in matched_placeholders}
 
+                # paragrafları değiştir
                 for para in document.paragraphs:
                     self.replace_text_in_paragraph(para, replacements)
 
+                # tabloları değiştir
                 for table in document.tables:
                     for r in table.rows:
                         for cell in r.cells:
@@ -328,6 +355,7 @@ Bu araç, bir Excel veri dosyasındaki bilgileri bir Word şablonuna yerleştiri
                                 self.replace_text_in_paragraph(para, replacements)
 
                 try:
+                    # dosya adını oluşturuyoruz
                     name_parts = [row[col].strip() for col in self.naming_columns]
                     name_parts = [part for part in name_parts if part]
                     if name_parts:
@@ -335,6 +363,7 @@ Bu araç, bir Excel veri dosyasındaki bilgileri bir Word şablonuna yerleştiri
                     else: 
                         filename_base = f"kayit_{index+1:03d}"
 
+                    # geçersiz karakterleri temizliyoruz
                     filename_base = re.sub(r'[\\/*?:"<>|\[\]]', "", filename_base)
                     max_len = 150 
                     if len(filename_base) > max_len:
@@ -344,12 +373,12 @@ Bu araç, bir Excel veri dosyasındaki bilgileri bir Word şablonuna yerleştiri
                         filename_base = f"kayit_{index+1:03d}"
 
                 except KeyError as key_ex: 
-                     print(f"HATA: Satır {index+1} için dosya adı oluşturulamadı. Sütun bulunamadı: {key_ex}")
+                     print(f"hata: satır {index+1} için dosya adı oluşturulamadı. sütun bulunamadı: {key_ex}")
                      messagebox.showerror("İsimlendirme Hatası", f"Dosya adı için seçilen '{key_ex}' sütunu Excel dosyasında bulunamadı.\nLütfen dosyaları tekrar kontrol edin.")
                      self.status_label.configure(text=f"İsimlendirme hatası: Sütun '{key_ex}' bulunamadı.", text_color="red")
                      return 
                 except Exception as name_ex: 
-                     print(f"Uyarı: Satır {index+1} için dosya adı oluşturulurken hata: {name_ex}")
+                     print(f"uyarı: satır {index+1} için dosya adı oluşturulurken hata: {name_ex}")
                      filename_base = f"kayit_{index+1:03d}"
 
 
@@ -359,16 +388,17 @@ Bu araç, bir Excel veri dosyasındaki bilgileri bir Word şablonuna yerleştiri
                 try:
                     document.save(output_filepath)
                 except Exception as save_ex:
-                    print(f"HATA: Dosya kaydedilemedi: {output_filepath}")
-                    print(f"Detay: {save_ex}")
+                    print(f"hata: dosya kaydedilemedi: {output_filepath}")
+                    print(f"detay: {save_ex}")
 
                     try:
+                        # basit isimle kaydetmeyi deniyoruz
                         simple_filename = f"{word_base_name}_kayit_{index+1:03d}.docx"
                         simple_filepath = os.path.join(output_dir, simple_filename)
-                        print(f"Basit isimle deneniyor: {simple_filepath}")
+                        print(f"basit isimle deneniyor: {simple_filepath}")
                         document.save(simple_filepath)
                     except Exception as simple_save_ex:
-                        print(f"Basit isimle kaydetme de BAŞARISIZ: {simple_save_ex}")
+                        print(f"basit isimle kaydetme de başarısız: {simple_save_ex}")
                         messagebox.showwarning("Kaydetme Hatası", f"'{output_filename}' dosyası kaydedilemedi.\nDosya adı geçersiz olabilir veya yazma izni olmayabilir.\nSatır {index+1} atlandı.")
 
 

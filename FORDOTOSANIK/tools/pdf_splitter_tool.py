@@ -3,6 +3,7 @@ from tkinter import filedialog, messagebox
 import pypdf
 import os
 
+# pdf bölme aracı sınıfı
 class PDFSplitterFrame(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
@@ -10,6 +11,7 @@ class PDFSplitterFrame(ctk.CTkFrame):
         self.create_widgets()
 
     def create_widgets(self):
+        # bilgi kutusu oluşturuyoruz
         self.info_textbox = ctk.CTkTextbox(self, height=66, wrap="word") 
         self.info_textbox.pack(padx=10, pady=(10, 5), fill="x", expand=False)
 
@@ -20,28 +22,45 @@ Genel amacı toplu taranan dosyaları daha yönetilebilir parçalara ayırmaktı
         self.info_textbox.configure(state="normal")
         self.info_textbox.insert("1.0", bilgi_metni.strip())
         self.info_textbox.configure(state="disabled")
+
+        # ana çerçeve
         main_frame = ctk.CTkFrame(self, corner_radius=10)
         main_frame.pack(pady=20, padx=20, fill="both", expand=True)
+        
+        # başlık
         title_label = ctk.CTkLabel(main_frame, text="PDF Sayfa Bölme Aracı", font=ctk.CTkFont(size=20, weight="bold"))
         title_label.pack(pady=(10, 20))
+        
+        # dosya seçme alanı
         file_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
         file_frame.pack(pady=10, padx=10, fill="x")
+        
         self.file_path_label = ctk.CTkLabel(file_frame, text="Lütfen bir PDF dosyası seçin...", text_color="gray")
         self.file_path_label.pack(side="left", padx=(0, 10), expand=True, fill="x")
+        
         select_button = ctk.CTkButton(file_frame, text="Dosya Seç", width=120, command=self.select_pdf)
         select_button.pack(side="right")
+        
+        # ayarlar alanı
         settings_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
         settings_frame.pack(pady=20, padx=10, fill="x")
+        
         pages_label = ctk.CTkLabel(settings_frame, text="Her bir dosyada kaç sayfa olsun?")
         pages_label.pack(side="left")
+        
         self.pages_entry = ctk.CTkEntry(settings_frame, width=80, justify="center")
         self.pages_entry.pack(side="left", padx=10)
         self.pages_entry.insert(0, "1")
+        
+        # işlem butonu
         self.process_button = ctk.CTkButton(main_frame, text="PDF'i Böl ve Kaydet", height=40, command=self.process_pdf, state="disabled")
         self.process_button.pack(pady=20, padx=10, fill="x")
+        
+        # durum etiketi
         self.status_label = ctk.CTkLabel(main_frame, text="", font=ctk.CTkFont(size=12))
         self.status_label.pack(pady=10)
 
+    # pdf dosyası seçme işlemi
     def select_pdf(self):
         file_path = filedialog.askopenfilename(title="Bir PDF Dosyası Seçin", filetypes=[("PDF Dosyaları", "*.pdf")])
         if file_path:
@@ -51,6 +70,7 @@ Genel amacı toplu taranan dosyaları daha yönetilebilir parçalara ayırmaktı
             self.process_button.configure(state="normal")
             self.status_label.configure(text="")
 
+    # pdf bölme işlemini başlatma
     def process_pdf(self):
         if not self.selected_pdf_path:
             messagebox.showerror("Hata", "Lütfen önce bir PDF dosyası seçin.")
@@ -61,27 +81,40 @@ Genel amacı toplu taranan dosyaları daha yönetilebilir parçalara ayırmaktı
         except ValueError:
             messagebox.showerror("Hata", "Lütfen geçerli bir sayfa sayısı girin (0'dan büyük bir tam sayı).")
             return
+            
         try:
             self.status_label.configure(text="PDF işleniyor, lütfen bekleyin...", text_color="yellow")
             self.update_idletasks()
+            
+            # pdf dosyasını okuyoruz
             reader = pypdf.PdfReader(self.selected_pdf_path)
             total_pages = len(reader.pages)
+            
+            # kayıt klasörünü soruyoruz
             output_dir = filedialog.askdirectory(title="Bölünen dosyaları nereye kaydetmek istersiniz?")
             if not output_dir:
                 self.status_label.configure(text="İşlem iptal edildi.", text_color="gray")
                 return
+                
             base_name, _ = os.path.splitext(os.path.basename(self.selected_pdf_path))
+            
+            # sayfaları döngüyle bölüyoruz
             for i in range(0, total_pages, pages_per_file):
                 writer = pypdf.PdfWriter()
                 end_page = min(i + pages_per_file, total_pages)
+                
                 for page_num in range(i, end_page):
                     writer.add_page(reader.pages[page_num])
+                    
                 output_filename = f"{base_name}_sayfa_{i+1}-{end_page}.pdf"
                 output_filepath = os.path.join(output_dir, output_filename)
+                
                 with open(output_filepath, 'wb') as output_file:
                     writer.write(output_file)
+                    
             self.status_label.configure(text=f"İşlem tamamlandı! {total_pages // pages_per_file + 1} dosya oluşturuldu.", text_color="lightgreen")
             messagebox.showinfo("Başarılı", f"PDF başarıyla bölündü ve dosyalar '{output_dir}' klasörüne kaydedildi.")
+            
         except Exception as e:
             self.status_label.configure(text=f"Bir hata oluştu: {e}", text_color="red")
             messagebox.showerror("Hata", f"PDF işlenirken bir hata oluştu:\n{e}")

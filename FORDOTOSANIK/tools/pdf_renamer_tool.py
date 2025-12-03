@@ -9,13 +9,16 @@ from utils.template_manager import TemplateManager
 from PIL import Image
 import sys
 
+# ocr kütüphanelerini yüklemeye çalışıyoruz
 try:
     import pytesseract
     from pdf2image import convert_from_path
 except ImportError:
+    # eğer yüklü değilse none yapıyoruz ki hata vermesin
     pytesseract = None
     convert_from_path = None
 
+# pdf okuma kütüphanesini yüklüyoruz
 try:
     from PyPDF2 import PdfReader
 except ImportError:
@@ -24,51 +27,58 @@ except ImportError:
     except ImportError:
         PdfReader = None
 
+# pdf yeniden adlandırma aracı sınıfı
 class PDFRenamerFrame(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master, fg_color="transparent")
         
+        # değişkenleri tanımlıyoruz
         self.patterns = []
         self.selected_files = []
         
-        # OCR Configuration
+        # ocr ayarlarını yapıyoruz
+        # eğer uygulama donmuşsa (exe ise) yolu ona göre alıyoruz
         if getattr(sys, 'frozen', False):
             application_path = os.path.dirname(sys.executable)
         else:
             application_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+        # tesseract ve poppler yollarını belirtiyoruz
         self.tesseract_path = os.path.join(application_path, 'tesseract', 'tesseract.exe')
         self.poppler_path = os.path.join(application_path, 'poppler', 'Library', 'bin')
         
+        # eğer pytesseract yüklüyse yolunu ayarlıyoruz
         if pytesseract:
             try:
                 pytesseract.pytesseract.tesseract_cmd = self.tesseract_path
             except Exception:
                 pass
 
+        # arayüz elemanlarını oluşturuyoruz
         self.create_widgets()
         
     def create_widgets(self):
-        # Layout configuration
+        # ızgara düzenini ayarlıyoruz
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
         
-        # --- Left Side: Pattern Management ---
+        # --- sol taraf: desen yönetimi ---
         left_frame = ctk.CTkFrame(self)
         left_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
         left_frame.grid_columnconfigure(0, weight=1)
         left_frame.grid_rowconfigure(2, weight=1) 
         
-        # --- Top Frame: Mode Selection ---
+        # --- üst kısım: mod seçimi ---
         mode_frame = ctk.CTkFrame(left_frame, fg_color="transparent")
         mode_frame.grid(row=0, column=0, padx=10, pady=(10, 5), sticky="ew")
         
         self.mode_var = ctk.StringVar(value="regex")
         
+        # mod değiştirme butonları
         ctk.CTkRadioButton(mode_frame, text="Dinamik Desen (Regex)", variable=self.mode_var, value="regex", command=self.toggle_mode).pack(side="left", padx=10, pady=10)
         ctk.CTkRadioButton(mode_frame, text="Görsel Şablon (Template)", variable=self.mode_var, value="template", command=self.toggle_mode).pack(side="left", padx=10, pady=10)
 
-        # --- Regex Frame ---
+        # --- regex çerçevesi ---
         self.regex_frame = ctk.CTkFrame(left_frame, fg_color="transparent")
         self.regex_frame.grid(row=1, column=0, padx=10, pady=5, sticky="ew")
         
@@ -77,9 +87,9 @@ class PDFRenamerFrame(ctk.CTkFrame):
         self.pattern_entry.pack(side="left", padx=5)
         ctk.CTkButton(self.regex_frame, text="Ekle", width=60, command=self.add_pattern).pack(side="left", padx=5)
 
-        # --- Template Frame ---
+        # --- şablon çerçevesi ---
         self.template_frame = ctk.CTkFrame(left_frame, fg_color="transparent")
-        # Don't grid initially, will be managed by toggle_mode
+        # başlangıçta gizli, mod değişiminde gösterilecek
         
         ctk.CTkLabel(self.template_frame, text="Şablon Seçiniz:").pack(side="left", padx=5)
         self.template_combobox = ctk.CTkComboBox(self.template_frame, values=[])
@@ -87,11 +97,11 @@ class PDFRenamerFrame(ctk.CTkFrame):
         ctk.CTkButton(self.template_frame, text="Yenile", command=self.refresh_templates).pack(fill="x", padx=5, pady=5)
         ctk.CTkButton(self.template_frame, text="Yenile", width=60, command=self.refresh_templates).pack(side="left", padx=5)
 
-        # --- Patterns List (Common) ---
+        # --- desen listesi (ortak alan) ---
         self.pattern_list_frame = ctk.CTkScrollableFrame(left_frame, label_text="Kullanılabilir Desenler")
         self.pattern_list_frame.grid(row=2, column=0, padx=10, pady=5, sticky="nsew")
         
-        # --- Right Side: File & Format ---
+        # --- sağ taraf: dosya ve format işlemleri ---
         right_frame = ctk.CTkFrame(self)
         right_frame.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
         right_frame.grid_columnconfigure(0, weight=1)
@@ -117,19 +127,23 @@ class PDFRenamerFrame(ctk.CTkFrame):
         self.status_label = ctk.CTkLabel(right_frame, text="", text_color="gray")
         self.status_label.grid(row=7, column=0, padx=20, pady=10)
 
+    # mod değiştirme fonksiyonu (regex veya şablon)
     def toggle_mode(self):
         mode = self.mode_var.get()
         if mode == "regex":
+            # regex moduna geçiş
             self.template_frame.grid_forget()
             self.regex_frame.grid(row=1, column=0, padx=10, pady=5, sticky="ew")
             self.pattern_list_frame.grid(row=2, column=0, padx=10, pady=5, sticky="nsew")
-            self.refresh_pattern_list() # Restore regex patterns
+            self.refresh_pattern_list() # regex desenlerini geri getir
         else:
+            # şablon moduna geçiş
             self.regex_frame.grid_forget()
             self.template_frame.grid(row=1, column=0, padx=10, pady=5, sticky="ew")
-            self.pattern_list_frame.grid(row=2, column=0, padx=10, pady=5, sticky="nsew") # Show list for template fields
+            self.pattern_list_frame.grid(row=2, column=0, padx=10, pady=5, sticky="nsew") # şablon alanlarını göster
             self.refresh_templates()
 
+    # şablonları yenileme fonksiyonu
     def refresh_templates(self):
         templates = TemplateManager.get_all_templates()
         self.template_combobox.configure(values=templates, command=self.on_template_select)
@@ -140,20 +154,24 @@ class PDFRenamerFrame(ctk.CTkFrame):
             self.template_combobox.set("")
             self.clear_pattern_list()
 
+    # şablon seçildiğinde çalışacak fonksiyon
     def on_template_select(self, choice):
         if not choice:
             return
         
         try:
+            # seçilen şablonun alanlarını yüklüyoruz
             fields = TemplateManager.load_template(choice)
             self.display_template_fields(fields)
         except Exception as e:
-            print(f"Error loading template fields: {e}")
+            print(f"şablon alanları yüklenirken hata: {e}")
 
+    # desen listesini temizleme
     def clear_pattern_list(self):
         for widget in self.pattern_list_frame.winfo_children():
             widget.destroy()
 
+    # şablon alanlarını ekranda gösterme
     def display_template_fields(self, fields):
         self.clear_pattern_list()
         
@@ -161,10 +179,12 @@ class PDFRenamerFrame(ctk.CTkFrame):
         
         for field in fields:
             name = field['name']
+            # her alan için bir buton oluşturuyoruz, tıklanınca kopyalanacak
             btn = ctk.CTkButton(self.pattern_list_frame, text=f"{{{name}}}", fg_color="gray", hover_color="darkgray",
                               command=lambda n=name: self.copy_to_format(n))
             btn.pack(fill="x", pady=2, padx=5)
 
+    # format girişine metin kopyalama
     def copy_to_format(self, text):
         current = self.format_entry.get()
         self.format_entry.insert(len(current), f"{{{text}}}")
@@ -173,6 +193,7 @@ class PDFRenamerFrame(ctk.CTkFrame):
         super().tkraise(aboveThis)
         self.refresh_templates()
 
+    # yeni desen ekleme
     def add_pattern(self):
         pattern = self.pattern_entry.get().strip()
         if not pattern:
@@ -186,11 +207,13 @@ class PDFRenamerFrame(ctk.CTkFrame):
         self.refresh_pattern_list()
         self.pattern_entry.delete(0, "end")
         
+    # desen silme
     def remove_pattern(self, pattern):
         if pattern in self.patterns:
             self.patterns.remove(pattern)
             self.refresh_pattern_list()
             
+    # desen listesini yenileme (regex modu için)
     def refresh_pattern_list(self):
         for widget in self.pattern_list_frame.winfo_children():
             widget.destroy()
@@ -206,6 +229,7 @@ class PDFRenamerFrame(ctk.CTkFrame):
                                   command=lambda p=pattern: self.remove_pattern(p))
             del_btn.pack(side="right", padx=5)
 
+    # dosya seçme işlemi
     def select_files(self):
         files = filedialog.askopenfilenames(
             title="PDF Dosyaları Seç",
@@ -216,12 +240,14 @@ class PDFRenamerFrame(ctk.CTkFrame):
             self.file_count_label.configure(text=f"Seçilen Dosya: {len(self.selected_files)}")
             self.update_rename_button()
             
+    # yeniden adlandırma butonunu güncelleme
     def update_rename_button(self):
         if self.selected_files:
             self.rename_btn.configure(state="normal")
         else:
             self.rename_btn.configure(state="disabled")
 
+    # yeniden adlandırma işlemini başlatma (thread içinde)
     def start_rename_thread(self):
         format_str = self.format_entry.get().strip()
         if not format_str:
@@ -239,10 +265,11 @@ class PDFRenamerFrame(ctk.CTkFrame):
         thread.daemon = True
         thread.start()
 
+    # pdf'den metin çıkarma
     def extract_text_from_pdf(self, pdf_path):
         text = ""
         try:
-            # 1. Try pypdf first
+            # 1. önce pypdf ile deniyoruz
             if PdfReader:
                 reader = PdfReader(pdf_path)
                 for page in reader.pages:
@@ -250,48 +277,49 @@ class PDFRenamerFrame(ctk.CTkFrame):
                     if extracted:
                         text += extracted + "\n"
             
-            # 2. If text is empty or too short, try OCR
+            # 2. eğer metin boşsa veya çok kısaysa ocr deniyoruz
             if not text.strip() or len(text) < 50:
                 if pytesseract and convert_from_path:
-                    print(f"OCR deneniyor: {os.path.basename(pdf_path)}")
+                    print(f"ocr deneniyor: {os.path.basename(pdf_path)}")
                     try:
                         images = convert_from_path(pdf_path, poppler_path=self.poppler_path)
                         for img in images:
-                            # Try different orientations if needed, but for now standard OCR
+                            # ocr ile metni okuyoruz
                             ocr_text = pytesseract.image_to_string(img, lang='tur+eng')
                             text += ocr_text + "\n"
                     except Exception as ocr_e:
-                        print(f"OCR hatası: {ocr_e}")
+                        print(f"ocr hatası: {ocr_e}")
                 else:
-                    print("OCR kütüphaneleri eksik, sadece metin çıkarıldı.")
+                    print("ocr kütüphaneleri eksik, sadece metin çıkarıldı.")
                     
         except Exception as e:
-            print(f"PDF okuma hatası ({os.path.basename(pdf_path)}): {e}")
+            print(f"pdf okuma hatası ({os.path.basename(pdf_path)}): {e}")
         return text
 
+    # desen için değer bulma
     def find_value_for_pattern(self, text, pattern):
-        # 1. Clean up the pattern: remove trailing colon if exists
+        # 1. deseni temizliyoruz: sonunda iki nokta varsa siliyoruz
         clean_pattern = pattern.strip()
         if clean_pattern.endswith(":"):
             clean_pattern = clean_pattern[:-1].strip()
             
-        # 2. Build flexible regex
-        # Use [ \t]* instead of \s* to avoid matching newlines within the pattern key
+        # 2. esnek regex oluşturuyoruz
+        # boşlukları esnek hale getiriyoruz
         escaped_chars = [re.escape(c) for c in clean_pattern]
         flexible_pattern = r"[ \t]*".join(escaped_chars)
         
-        # 3. Add optional colon and whitespace at the end
-        # Use [ \t]* to avoid consuming the newline that separates key and value
+        # 3. sona opsiyonel iki nokta ve boşluk ekliyoruz
         final_regex_base = fr"{flexible_pattern}[ \t]*:?"
         
-        # Try finding on the same line first
+        # önce aynı satırda arıyoruz
         match = re.search(fr"{final_regex_base}[ \t]*([^\n]*)", text, re.IGNORECASE)
         if match:
             value = match.group(1).strip()
             if value: 
+                # dosya adında olmaması gereken karakterleri temizliyoruz
                 return re.sub(r'[\\/*?:"<>|]', "", value)
         
-        # If not found or empty, try looking at the next line
+        # eğer bulunamazsa bir alt satıra bakıyoruz
         regex_multi = fr"{final_regex_base}[ \t]*[\r\n]+\s*([^\n]+)"
         match_multiline = re.search(regex_multi, text, re.IGNORECASE)
         if match_multiline:
@@ -300,9 +328,10 @@ class PDFRenamerFrame(ctk.CTkFrame):
             
         return ""
 
+    # asıl yeniden adlandırma işlemi
     def rename_process(self, format_str):
         try:
-            # 1. Backup files
+            # 1. dosyaları yedekliyoruz
             self.status_label.configure(text="Yedekleme yapılıyor...")
             BackupManager.create_backup(self.selected_files)
             
@@ -322,7 +351,7 @@ class PDFRenamerFrame(ctk.CTkFrame):
                 
                 if mode == "regex":
                     text = self.extract_text_from_pdf(pdf_path)
-                    # Extract values for all patterns
+                    # tüm desenler için değerleri buluyoruz
                     for pattern in self.patterns:
                         val = self.find_value_for_pattern(text, pattern)
                         values[pattern] = val
@@ -330,7 +359,7 @@ class PDFRenamerFrame(ctk.CTkFrame):
                             clean_key = pattern[:-1].strip()
                             values[clean_key] = val
                 else:
-                    # Template Mode
+                    # şablon modu
                     try:
                         values = TemplateManager.extract_data_with_template(
                             pdf_path, template_name, 
@@ -338,9 +367,10 @@ class PDFRenamerFrame(ctk.CTkFrame):
                             tesseract_path=self.tesseract_path
                         )
                     except Exception as e:
-                        print(f"Template extraction error for {pdf_path}: {e}")
+                        print(f"şablon çıkarma hatası {pdf_path}: {e}")
                 
                 try:
+                    # yeni dosya adını oluşturuyoruz
                     new_filename = format_str.format(**values)
                     if not new_filename.strip():
                         raise ValueError("Oluşan dosya adı boş.")
@@ -350,7 +380,7 @@ class PDFRenamerFrame(ctk.CTkFrame):
                     directory = os.path.dirname(pdf_path)
                     new_path = os.path.join(directory, new_filename)
                     
-                    # Handle duplicates
+                    # aynı isimde dosya varsa sonuna numara ekliyoruz
                     if os.path.exists(new_path) and new_path.lower() != pdf_path.lower():
                         base, ext = os.path.splitext(new_filename)
                         counter = 1
@@ -358,14 +388,15 @@ class PDFRenamerFrame(ctk.CTkFrame):
                             counter += 1
                         new_path = os.path.join(directory, f"{base}_{counter}{ext}")
                     
+                    # dosyayı yeniden adlandırıyoruz
                     if new_path.lower() != pdf_path.lower():
                         os.rename(pdf_path, new_path)
                         processed_count += 1
                         
                 except KeyError as e:
-                    print(f"Format hatası: {e} anahtarı bulunamadı.")
+                    print(f"format hatası: {e} anahtarı bulunamadı.")
                 except Exception as e:
-                    print(f"Yeniden adlandırma hatası ({pdf_path}): {e}")
+                    print(f"yeniden adlandırma hatası ({pdf_path}): {e}")
             
             self.status_label.configure(text=f"Tamamlandı! {processed_count}/{total} dosya adlandırıldı.", text_color="green")
             messagebox.showinfo("Başarılı", "İşlem tamamlandı.")

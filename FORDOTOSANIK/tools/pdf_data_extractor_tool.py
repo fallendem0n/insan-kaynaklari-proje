@@ -7,13 +7,16 @@ import pandas as pd
 from tkinter import filedialog, messagebox
 from utils.template_manager import TemplateManager
 
+# ocr kütüphanelerini yüklemeye çalışıyoruz
 try:
     import pytesseract
     from pdf2image import convert_from_path
 except ImportError:
+    # eğer yüklü değilse none yapıyoruz ki hata vermesin
     pytesseract = None
     convert_from_path = None
 
+# pdf okuma kütüphanesini yüklüyoruz
 try:
     from PyPDF2 import PdfReader
 except ImportError:
@@ -22,42 +25,48 @@ except ImportError:
     except ImportError:
         PdfReader = None
 
+# pdf veri çıkarma aracı sınıfı
 class PDFDataExtractorFrame(ctk.CTkFrame):
     def __init__(self, master=None):
         super().__init__(master)
         
+        # değişkenleri tanımlıyoruz
         self.patterns = []
         self.selected_files = []
         
-        # OCR Configuration
+        # ocr ayarlarını yapıyoruz
+        # eğer uygulama donmuşsa (exe ise) yolu ona göre alıyoruz
         if getattr(sys, 'frozen', False):
             application_path = os.path.dirname(sys.executable)
         else:
             application_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+        # tesseract ve poppler yollarını belirtiyoruz
         self.tesseract_path = os.path.join(application_path, 'tesseract', 'tesseract.exe')
         self.poppler_path = os.path.join(application_path, 'poppler', 'Library', 'bin')
         
+        # eğer pytesseract yüklüyse yolunu ayarlıyoruz
         if pytesseract:
             try:
                 pytesseract.pytesseract.tesseract_cmd = self.tesseract_path
             except Exception:
                 pass
 
+        # arayüz elemanlarını oluşturuyoruz
         self.create_widgets()
         
     def create_widgets(self):
-        # Layout configuration
+        # ızgara düzenini ayarlıyoruz
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
         
-        # --- Left Side: Pattern Management ---
+        # --- sol taraf: desen yönetimi ---
         left_frame = ctk.CTkFrame(self)
         left_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
         left_frame.grid_columnconfigure(0, weight=1)
-        left_frame.grid_rowconfigure(3, weight=1) # Pattern list expands
+        left_frame.grid_rowconfigure(3, weight=1) # desen listesi genişleyecek
         
-        # Mode Selection
+        # mod seçimi
         mode_frame = ctk.CTkFrame(left_frame, fg_color="transparent")
         mode_frame.grid(row=0, column=0, padx=10, pady=(10, 5), sticky="ew")
         
@@ -65,7 +74,7 @@ class PDFDataExtractorFrame(ctk.CTkFrame):
         ctk.CTkRadioButton(mode_frame, text="Dinamik Desen (Regex)", variable=self.mode_var, value="regex", command=self.toggle_mode).pack(side="left", padx=10)
         ctk.CTkRadioButton(mode_frame, text="Görsel Şablon", variable=self.mode_var, value="template", command=self.toggle_mode).pack(side="left", padx=10)
 
-        # Regex Frame
+        # regex çerçevesi
         self.regex_frame = ctk.CTkFrame(left_frame, fg_color="transparent")
         self.regex_frame.grid(row=1, column=0, padx=10, pady=5, sticky="ew")
         
@@ -80,20 +89,20 @@ class PDFDataExtractorFrame(ctk.CTkFrame):
         add_btn = ctk.CTkButton(input_frame, text="Ekle", width=60, command=self.add_pattern)
         add_btn.pack(side="right")
 
-        # Template Frame
+        # şablon çerçevesi
         self.template_frame = ctk.CTkFrame(left_frame, fg_color="transparent")
-        # Don't grid initially
+        # başlangıçta gizli
         
         ctk.CTkLabel(self.template_frame, text="Şablon Seçiniz:", font=ctk.CTkFont(weight="bold")).pack(anchor="w", padx=5)
         self.template_combobox = ctk.CTkComboBox(self.template_frame, values=[], command=lambda x: self.update_process_button())
         self.template_combobox.pack(fill="x", padx=5, pady=5)
         ctk.CTkButton(self.template_frame, text="Yenile", command=self.refresh_templates).pack(fill="x", padx=5, pady=5)
 
-        # Pattern List (Only for Regex mode)
+        # desen listesi (sadece regex modu için)
         self.pattern_list_frame = ctk.CTkScrollableFrame(left_frame, label_text="Kullanılabilir Desenler")
         self.pattern_list_frame.grid(row=3, column=0, padx=10, pady=5, sticky="nsew")
         
-        # --- Right Side: File Selection & Action ---
+        # --- sağ taraf: dosya seçimi ve işlem ---
         right_frame = ctk.CTkFrame(self)
         right_frame.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
         right_frame.grid_columnconfigure(0, weight=1)
@@ -112,7 +121,7 @@ class PDFDataExtractorFrame(ctk.CTkFrame):
         self.status_label = ctk.CTkLabel(right_frame, text="", text_color="gray")
         self.status_label.grid(row=4, column=0, padx=20, pady=10)
         
-        # Instructions
+        # kullanım talimatları
         info_text = (
             "NASIL KULLANILIR?\n\n"
             "1. Sol taraftan PDF içinde aranacak başlıkları ekleyin.\n"
@@ -124,19 +133,23 @@ class PDFDataExtractorFrame(ctk.CTkFrame):
         )
         ctk.CTkLabel(right_frame, text=info_text, justify="left", text_color="gray").grid(row=5, column=0, padx=20, pady=20, sticky="w")
 
+    # mod değiştirme fonksiyonu
     def toggle_mode(self):
         mode = self.mode_var.get()
         if mode == "regex":
+            # regex moduna geçiş
             self.template_frame.grid_forget()
             self.regex_frame.grid(row=1, column=0, padx=10, pady=5, sticky="ew")
             self.pattern_list_frame.grid(row=3, column=0, padx=10, pady=5, sticky="nsew")
         else:
+            # şablon moduna geçiş
             self.regex_frame.grid_forget()
             self.pattern_list_frame.grid_forget()
             self.template_frame.grid(row=1, column=0, padx=10, pady=5, sticky="ew")
             self.refresh_templates()
         self.update_process_button()
 
+    # şablon listesini yenileme
     def refresh_templates(self):
         templates = TemplateManager.get_all_templates()
         self.template_combobox.configure(values=templates)
@@ -149,6 +162,7 @@ class PDFDataExtractorFrame(ctk.CTkFrame):
         super().tkraise(aboveThis)
         self.refresh_templates()
 
+    # yeni desen ekleme
     def add_pattern(self):
         pattern = self.pattern_entry.get().strip()
         if not pattern:
@@ -162,13 +176,15 @@ class PDFDataExtractorFrame(ctk.CTkFrame):
         self.refresh_pattern_list()
         self.pattern_entry.delete(0, "end")
         
+    # desen silme
     def remove_pattern(self, pattern):
         if pattern in self.patterns:
             self.patterns.remove(pattern)
             self.refresh_pattern_list()
             
+    # desen listesini güncelleme
     def refresh_pattern_list(self):
-        # Clear existing widgets
+        # mevcut widgetları temizliyoruz
         for widget in self.pattern_list_frame.winfo_children():
             widget.destroy()
             
@@ -183,6 +199,7 @@ class PDFDataExtractorFrame(ctk.CTkFrame):
                                   command=lambda p=pattern: self.remove_pattern(p))
             del_btn.pack(side="right", padx=5)
 
+    # dosya seçme işlemi
     def select_files(self):
         files = filedialog.askopenfilenames(
             title="PDF Dosyaları Seç",
@@ -193,6 +210,7 @@ class PDFDataExtractorFrame(ctk.CTkFrame):
             self.file_count_label.configure(text=f"Seçilen Dosya: {len(self.selected_files)}")
             self.update_process_button()
             
+    # işlem butonunu güncelleme
     def update_process_button(self):
         has_files = bool(self.selected_files)
         mode = self.mode_var.get()
@@ -208,6 +226,7 @@ class PDFDataExtractorFrame(ctk.CTkFrame):
         else:
             self.process_btn.configure(state="disabled")
 
+    # veri çıkarma işlemini başlatma
     def start_extraction(self):
         if not self.selected_files:
             messagebox.showwarning("Uyarı", "Lütfen en az bir PDF dosyası seçin.")
@@ -226,19 +245,20 @@ class PDFDataExtractorFrame(ctk.CTkFrame):
             
         self.status_label.configure(text="İşlem başlıyor...")
         
-        # Run in thread
+        # işlemi ayrı bir thread'de çalıştırıyoruz
         threading.Thread(target=self.extraction_process, args=(mode, template_name), daemon=True).start()
 
+    # asıl veri çıkarma süreci
     def extraction_process(self, mode, template_name):
         try:
             all_data = []
             total = len(self.selected_files)
             
-            # Get columns
+            # sütunları belirliyoruz
             if mode == "regex":
                 columns = ["Dosya Adı"] + self.patterns
             else:
-                # Load template fields to get columns
+                # şablon alanlarını yükleyip sütun yapıyoruz
                 fields = TemplateManager.load_template(template_name)
                 columns = ["Dosya Adı"] + [f['name'] for f in fields]
             
@@ -253,7 +273,7 @@ class PDFDataExtractorFrame(ctk.CTkFrame):
                         val = self.find_value_for_pattern(text, pattern)
                         row_data[pattern] = val
                 else:
-                    # Template Mode
+                    # şablon modu
                     try:
                         extracted = TemplateManager.extract_data_with_template(
                             pdf_path, template_name,
@@ -262,14 +282,14 @@ class PDFDataExtractorFrame(ctk.CTkFrame):
                         )
                         row_data.update(extracted)
                     except Exception as e:
-                        print(f"Template extraction error: {e}")
+                        print(f"şablon çıkarma hatası: {e}")
                 
                 all_data.append(row_data)
             
-            # Create DataFrame
+            # dataframe oluşturuyoruz
             df = pd.DataFrame(all_data, columns=columns)
             
-            # Save to Excel
+            # excel'e kaydediyoruz
             save_path = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel Dosyası", "*.xlsx")])
             if save_path:
                 df.to_excel(save_path, index=False)
@@ -281,16 +301,17 @@ class PDFDataExtractorFrame(ctk.CTkFrame):
         except Exception as e:
             self.status_label.configure(text=f"Hata: {str(e)}", text_color="red")
             messagebox.showerror("Hata", f"İşlem sırasında bir hata oluştu:\n{e}")
-            print(f"Process error: {e}")
+            print(f"işlem hatası: {e}")
             
         finally:
             self.process_btn.configure(state="normal")
             self.select_files_btn.configure(state="normal")
 
+    # pdf'den metin çıkarma
     def extract_text_from_pdf(self, pdf_path):
         text = ""
         try:
-            # 1. Try pypdf first
+            # 1. önce pypdf ile deniyoruz
             if PdfReader:
                 reader = PdfReader(pdf_path)
                 for page in reader.pages:
@@ -298,49 +319,46 @@ class PDFDataExtractorFrame(ctk.CTkFrame):
                     if extracted:
                         text += extracted + "\n"
             
-            # 2. If text is empty or too short, try OCR
+            # 2. metin yoksa ocr deniyoruz
             if not text.strip() or len(text) < 50:
                 if pytesseract and convert_from_path:
-                    print(f"OCR deneniyor: {os.path.basename(pdf_path)}")
+                    print(f"ocr deneniyor: {os.path.basename(pdf_path)}")
                     try:
                         images = convert_from_path(pdf_path, poppler_path=self.poppler_path)
                         for img in images:
                             ocr_text = pytesseract.image_to_string(img, lang='tur+eng')
                             text += ocr_text + "\n"
                     except Exception as ocr_e:
-                        print(f"OCR hatası: {ocr_e}")
+                        print(f"ocr hatası: {ocr_e}")
                 else:
-                    print("OCR kütüphaneleri eksik, sadece metin çıkarıldı.")
+                    print("ocr kütüphaneleri eksik, sadece metin çıkarıldı.")
                     
         except Exception as e:
-            print(f"PDF okuma hatası ({os.path.basename(pdf_path)}): {e}")
+            print(f"pdf okuma hatası ({os.path.basename(pdf_path)}): {e}")
         return text
 
+    # desen için değer bulma
     def find_value_for_pattern(self, text, pattern):
-        # 1. Clean up the pattern: remove trailing colon if exists, we will add it optionally in regex
+        # 1. deseni temizliyoruz
         clean_pattern = pattern.strip()
         if clean_pattern.endswith(":"):
             clean_pattern = clean_pattern[:-1].strip()
             
-        # 2. Build flexible regex
-        # Escape special chars first
+        # 2. esnek regex oluşturuyoruz
         escaped_chars = [re.escape(c) for c in clean_pattern]
-        # Join with [ \t]* to allow whitespace between any characters (e.g. "S i c i l")
         flexible_pattern = r"[ \t]*".join(escaped_chars)
         
-        # 3. Add optional colon and whitespace at the end
-        # Pattern + optional whitespace + optional colon + optional whitespace
+        # 3. sona opsiyonel iki nokta ekliyoruz
         final_regex_base = fr"{flexible_pattern}[ \t]*:?"
         
-        # Try finding on the same line first
-        # Look for: Pattern + (optional colon) + whitespace + (Value)
+        # önce aynı satırda arıyoruz
         match = re.search(fr"{final_regex_base}[ \t]*([^\n]*)", text, re.IGNORECASE)
         if match:
             value = match.group(1).strip()
             if value:
                 return value
         
-        # If not found or empty, try looking at the next line
+        # bulunamazsa alt satıra bakıyoruz
         match_multiline = re.search(fr"{final_regex_base}[ \t]*[\r\n]+\s*([^\n]+)", text, re.IGNORECASE)
         if match_multiline:
             value = match_multiline.group(1).strip()
