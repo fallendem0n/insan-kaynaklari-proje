@@ -1,0 +1,160 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\husey\\Desktop\\FORDOTOSANIK-master\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{330E9234-F5E7-4612-81DC-E5D92183F396}|FORDOTOSANIK\\FORDOTOSANIK.pyproj|C:\\Users\\husey\\Desktop\\FORDOTOSANIK-master\\FORDOTOSANIK\\modern_theme.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{330E9234-F5E7-4612-81DC-E5D92183F396}|FORDOTOSANIK\\FORDOTOSANIK.pyproj|solutionrelative:FORDOTOSANIK\\modern_theme.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{330E9234-F5E7-4612-81DC-E5D92183F396}|FORDOTOSANIK\\FORDOTOSANIK.pyproj|C:\\Users\\husey\\Desktop\\FORDOTOSANIK-master\\FORDOTOSANIK\\tools\\egitim_sertifikasi_tool.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{330E9234-F5E7-4612-81DC-E5D92183F396}|FORDOTOSANIK\\FORDOTOSANIK.pyproj|solutionrelative:FORDOTOSANIK\\tools\\egitim_sertifikasi_tool.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{330E9234-F5E7-4612-81DC-E5D92183F396}|FORDOTOSANIK\\FORDOTOSANIK.pyproj|C:\\Users\\husey\\Desktop\\FORDOTOSANIK-master\\FORDOTOSANIK\\tools\\mail_merger_tool.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{330E9234-F5E7-4612-81DC-E5D92183F396}|FORDOTOSANIK\\FORDOTOSANIK.pyproj|solutionrelative:FORDOTOSANIK\\tools\\mail_merger_tool.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{330E9234-F5E7-4612-81DC-E5D92183F396}|FORDOTOSANIK\\FORDOTOSANIK.pyproj|C:\\Users\\husey\\Desktop\\FORDOTOSANIK-master\\FORDOTOSANIK\\tools\\pdf_renamer_tool.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{330E9234-F5E7-4612-81DC-E5D92183F396}|FORDOTOSANIK\\FORDOTOSANIK.pyproj|solutionrelative:FORDOTOSANIK\\tools\\pdf_renamer_tool.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{330E9234-F5E7-4612-81DC-E5D92183F396}|FORDOTOSANIK\\FORDOTOSANIK.pyproj|C:\\Users\\husey\\Desktop\\FORDOTOSANIK-master\\FORDOTOSANIK\\tools\\pdf_splitter_tool.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{330E9234-F5E7-4612-81DC-E5D92183F396}|FORDOTOSANIK\\FORDOTOSANIK.pyproj|solutionrelative:FORDOTOSANIK\\tools\\pdf_splitter_tool.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{330E9234-F5E7-4612-81DC-E5D92183F396}|FORDOTOSANIK\\FORDOTOSANIK.pyproj|C:\\Users\\husey\\Desktop\\FORDOTOSANIK-master\\FORDOTOSANIK\\tools\\pdf_to_txt_tool.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{330E9234-F5E7-4612-81DC-E5D92183F396}|FORDOTOSANIK\\FORDOTOSANIK.pyproj|solutionrelative:FORDOTOSANIK\\tools\\pdf_to_txt_tool.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{330E9234-F5E7-4612-81DC-E5D92183F396}|FORDOTOSANIK\\FORDOTOSANIK.pyproj|C:\\Users\\husey\\Desktop\\FORDOTOSANIK-master\\FORDOTOSANIK\\main.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{330E9234-F5E7-4612-81DC-E5D92183F396}|FORDOTOSANIK\\FORDOTOSANIK.pyproj|solutionrelative:FORDOTOSANIK\\main.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{330E9234-F5E7-4612-81DC-E5D92183F396}|FORDOTOSANIK\\FORDOTOSANIK.pyproj|C:\\Users\\husey\\Desktop\\FORDOTOSANIK-master\\FORDOTOSANIK\\gui_manager.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{330E9234-F5E7-4612-81DC-E5D92183F396}|FORDOTOSANIK\\FORDOTOSANIK.pyproj|solutionrelative:FORDOTOSANIK\\gui_manager.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 7,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "mail_merger_tool.py",
+              "DocumentMoniker": "C:\\Users\\husey\\Desktop\\FORDOTOSANIK-master\\FORDOTOSANIK\\tools\\mail_merger_tool.py",
+              "RelativeDocumentMoniker": "FORDOTOSANIK\\tools\\mail_merger_tool.py",
+              "ToolTip": "C:\\Users\\husey\\Desktop\\FORDOTOSANIK-master\\FORDOTOSANIK\\tools\\mail_merger_tool.py",
+              "RelativeToolTip": "FORDOTOSANIK\\tools\\mail_merger_tool.py",
+              "ViewState": "AgIAAHQBAAAAAAAAAAAAABYBAABMAAAAAAAAAA==",
+              "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAHfSURBVDhPpZCxaxNhGMZ/9zVJaUuDUlq1FBWLZBFTCXo4BFyU1qGKi4OkIHhkzF/g0KF00M2lR9YUdDDQQVAcJILoQUd1UNRmkhoRm8RL777v7nOoCZd4AcEH3uF5nvd73vd74X\u002BgtTai3LIsHeWDEEJct217a1DvwbIs7bpubFUqFW3b9naxWLwWfSOipAvHcfqqi0KhkMtms3cty1rsaomeG4FpmoMSANVqlXQ6nQMWgacMC4hOBchduEj\u002ByjKjScGh8SS1Wq3nxQZEN3j1eY/Vrfe8rTeQvsf89ARLS1cz5XIZ/uUGXxptQiVRUhJIybudXaZn52a7vbEBpmkyNb/A69YM9W8tDEJOTI2hpI\u002BSkvOZH2f13sNAB\u002B07sV9wHIdH9Unquz9RvoeUPtL3UFISKkky\u002BAT7HwTi6FpsgGma3N9\u002Bg5I\u002BKaFZyU8wOpJChwHnjiuE9wKCXyC/zsQGOI7DeELjtiUPbgky6Wd/HA3KBelC4AIpNfQGl88cQ0mfI5PugRhKkM2DUk0INYwtPI/dAGAlf4rbl06T6DyBVgeCABJzYPhwcm0V8ICNvwJKpVIf37h3IxSyKVAuBMDIYQAMw1jvaxwGrYNl3Xq5o79vat3Y3Nedj4\u002B11je7/m\u002BXOuyzFtDhUgAAAABJRU5ErkJggg==",
+              "WhenOpened": "2025-10-21T11:42:57.674Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "pdf_splitter_tool.py",
+              "DocumentMoniker": "C:\\Users\\husey\\Desktop\\FORDOTOSANIK-master\\FORDOTOSANIK\\tools\\pdf_splitter_tool.py",
+              "RelativeDocumentMoniker": "FORDOTOSANIK\\tools\\pdf_splitter_tool.py",
+              "ToolTip": "C:\\Users\\husey\\Desktop\\FORDOTOSANIK-master\\FORDOTOSANIK\\tools\\pdf_splitter_tool.py",
+              "RelativeToolTip": "FORDOTOSANIK\\tools\\pdf_splitter_tool.py",
+              "ViewState": "AgIAAE4AAAAAAAAAAAAAABUAAAA1AAAAAAAAAA==",
+              "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAHfSURBVDhPpZCxaxNhGMZ/9zVJaUuDUlq1FBWLZBFTCXo4BFyU1qGKi4OkIHhkzF/g0KF00M2lR9YUdDDQQVAcJILoQUd1UNRmkhoRm8RL777v7nOoCZd4AcEH3uF5nvd73vd74X\u002BgtTai3LIsHeWDEEJct217a1DvwbIs7bpubFUqFW3b9naxWLwWfSOipAvHcfqqi0KhkMtms3cty1rsaomeG4FpmoMSANVqlXQ6nQMWgacMC4hOBchduEj\u002ByjKjScGh8SS1Wq3nxQZEN3j1eY/Vrfe8rTeQvsf89ARLS1cz5XIZ/uUGXxptQiVRUhJIybudXaZn52a7vbEBpmkyNb/A69YM9W8tDEJOTI2hpI\u002BSkvOZH2f13sNAB\u002B07sV9wHIdH9Unquz9RvoeUPtL3UFISKkky\u002BAT7HwTi6FpsgGma3N9\u002Bg5I\u002BKaFZyU8wOpJChwHnjiuE9wKCXyC/zsQGOI7DeELjtiUPbgky6Wd/HA3KBelC4AIpNfQGl88cQ0mfI5PugRhKkM2DUk0INYwtPI/dAGAlf4rbl06T6DyBVgeCABJzYPhwcm0V8ICNvwJKpVIf37h3IxSyKVAuBMDIYQAMw1jvaxwGrYNl3Xq5o79vat3Y3Nedj4\u002B11je7/m\u002BXOuyzFtDhUgAAAABJRU5ErkJggg==",
+              "WhenOpened": "2025-10-21T06:47:41.562Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "pdf_renamer_tool.py",
+              "DocumentMoniker": "C:\\Users\\husey\\Desktop\\FORDOTOSANIK-master\\FORDOTOSANIK\\tools\\pdf_renamer_tool.py",
+              "RelativeDocumentMoniker": "FORDOTOSANIK\\tools\\pdf_renamer_tool.py",
+              "ToolTip": "C:\\Users\\husey\\Desktop\\FORDOTOSANIK-master\\FORDOTOSANIK\\tools\\pdf_renamer_tool.py",
+              "RelativeToolTip": "FORDOTOSANIK\\tools\\pdf_renamer_tool.py",
+              "ViewState": "AgIAAN4AAAAAAAAAAAAAAMMAAAAAAAAAAAAAAA==",
+              "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAHfSURBVDhPpZCxaxNhGMZ/9zVJaUuDUlq1FBWLZBFTCXo4BFyU1qGKi4OkIHhkzF/g0KF00M2lR9YUdDDQQVAcJILoQUd1UNRmkhoRm8RL777v7nOoCZd4AcEH3uF5nvd73vd74X\u002BgtTai3LIsHeWDEEJct217a1DvwbIs7bpubFUqFW3b9naxWLwWfSOipAvHcfqqi0KhkMtms3cty1rsaomeG4FpmoMSANVqlXQ6nQMWgacMC4hOBchduEj\u002ByjKjScGh8SS1Wq3nxQZEN3j1eY/Vrfe8rTeQvsf89ARLS1cz5XIZ/uUGXxptQiVRUhJIybudXaZn52a7vbEBpmkyNb/A69YM9W8tDEJOTI2hpI\u002BSkvOZH2f13sNAB\u002B07sV9wHIdH9Unquz9RvoeUPtL3UFISKkky\u002BAT7HwTi6FpsgGma3N9\u002Bg5I\u002BKaFZyU8wOpJChwHnjiuE9wKCXyC/zsQGOI7DeELjtiUPbgky6Wd/HA3KBelC4AIpNfQGl88cQ0mfI5PugRhKkM2DUk0INYwtPI/dAGAlf4rbl06T6DyBVgeCABJzYPhwcm0V8ICNvwJKpVIf37h3IxSyKVAuBMDIYQAMw1jvaxwGrYNl3Xq5o79vat3Y3Nedj4\u002B11je7/m\u002BXOuyzFtDhUgAAAABJRU5ErkJggg==",
+              "WhenOpened": "2025-10-21T06:47:38.998Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "egitim_sertifikasi_tool.py",
+              "DocumentMoniker": "C:\\Users\\husey\\Desktop\\FORDOTOSANIK-master\\FORDOTOSANIK\\tools\\egitim_sertifikasi_tool.py",
+              "RelativeDocumentMoniker": "FORDOTOSANIK\\tools\\egitim_sertifikasi_tool.py",
+              "ToolTip": "C:\\Users\\husey\\Desktop\\FORDOTOSANIK-master\\FORDOTOSANIK\\tools\\egitim_sertifikasi_tool.py",
+              "RelativeToolTip": "FORDOTOSANIK\\tools\\egitim_sertifikasi_tool.py",
+              "ViewState": "AgIAAKsAAAAAAAAAAAAAAMQAAAAAAAAAAAAAAA==",
+              "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAHfSURBVDhPpZCxaxNhGMZ/9zVJaUuDUlq1FBWLZBFTCXo4BFyU1qGKi4OkIHhkzF/g0KF00M2lR9YUdDDQQVAcJILoQUd1UNRmkhoRm8RL777v7nOoCZd4AcEH3uF5nvd73vd74X\u002BgtTai3LIsHeWDEEJct217a1DvwbIs7bpubFUqFW3b9naxWLwWfSOipAvHcfqqi0KhkMtms3cty1rsaomeG4FpmoMSANVqlXQ6nQMWgacMC4hOBchduEj\u002ByjKjScGh8SS1Wq3nxQZEN3j1eY/Vrfe8rTeQvsf89ARLS1cz5XIZ/uUGXxptQiVRUhJIybudXaZn52a7vbEBpmkyNb/A69YM9W8tDEJOTI2hpI\u002BSkvOZH2f13sNAB\u002B07sV9wHIdH9Unquz9RvoeUPtL3UFISKkky\u002BAT7HwTi6FpsgGma3N9\u002Bg5I\u002BKaFZyU8wOpJChwHnjiuE9wKCXyC/zsQGOI7DeELjtiUPbgky6Wd/HA3KBelC4AIpNfQGl88cQ0mfI5PugRhKkM2DUk0INYwtPI/dAGAlf4rbl06T6DyBVgeCABJzYPhwcm0V8ICNvwJKpVIf37h3IxSyKVAuBMDIYQAMw1jvaxwGrYNl3Xq5o79vat3Y3Nedj4\u002B11je7/m\u002BXOuyzFtDhUgAAAABJRU5ErkJggg==",
+              "WhenOpened": "2025-10-21T06:47:33.25Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "gui_manager.py",
+              "DocumentMoniker": "C:\\Users\\husey\\Desktop\\FORDOTOSANIK-master\\FORDOTOSANIK\\gui_manager.py",
+              "RelativeDocumentMoniker": "FORDOTOSANIK\\gui_manager.py",
+              "ToolTip": "C:\\Users\\husey\\Desktop\\FORDOTOSANIK-master\\FORDOTOSANIK\\gui_manager.py",
+              "RelativeToolTip": "FORDOTOSANIK\\gui_manager.py",
+              "ViewState": "AgIAAEgAAAAAAAAAAAAAAFYAAAAAAAAAAAAAAA==",
+              "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAHfSURBVDhPpZCxaxNhGMZ/9zVJaUuDUlq1FBWLZBFTCXo4BFyU1qGKi4OkIHhkzF/g0KF00M2lR9YUdDDQQVAcJILoQUd1UNRmkhoRm8RL777v7nOoCZd4AcEH3uF5nvd73vd74X\u002BgtTai3LIsHeWDEEJct217a1DvwbIs7bpubFUqFW3b9naxWLwWfSOipAvHcfqqi0KhkMtms3cty1rsaomeG4FpmoMSANVqlXQ6nQMWgacMC4hOBchduEj\u002ByjKjScGh8SS1Wq3nxQZEN3j1eY/Vrfe8rTeQvsf89ARLS1cz5XIZ/uUGXxptQiVRUhJIybudXaZn52a7vbEBpmkyNb/A69YM9W8tDEJOTI2hpI\u002BSkvOZH2f13sNAB\u002B07sV9wHIdH9Unquz9RvoeUPtL3UFISKkky\u002BAT7HwTi6FpsgGma3N9\u002Bg5I\u002BKaFZyU8wOpJChwHnjiuE9wKCXyC/zsQGOI7DeELjtiUPbgky6Wd/HA3KBelC4AIpNfQGl88cQ0mfI5PugRhKkM2DUk0INYwtPI/dAGAlf4rbl06T6DyBVgeCABJzYPhwcm0V8ICNvwJKpVIf37h3IxSyKVAuBMDIYQAMw1jvaxwGrYNl3Xq5o79vat3Y3Nedj4\u002B11je7/m\u002BXOuyzFtDhUgAAAABJRU5ErkJggg==",
+              "WhenOpened": "2025-10-21T06:10:32.213Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "main.py",
+              "DocumentMoniker": "C:\\Users\\husey\\Desktop\\FORDOTOSANIK-master\\FORDOTOSANIK\\main.py",
+              "RelativeDocumentMoniker": "FORDOTOSANIK\\main.py",
+              "ToolTip": "C:\\Users\\husey\\Desktop\\FORDOTOSANIK-master\\FORDOTOSANIK\\main.py",
+              "RelativeToolTip": "FORDOTOSANIK\\main.py",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAASAAAAAAAAAA==",
+              "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAHfSURBVDhPpZCxaxNhGMZ/9zVJaUuDUlq1FBWLZBFTCXo4BFyU1qGKi4OkIHhkzF/g0KF00M2lR9YUdDDQQVAcJILoQUd1UNRmkhoRm8RL777v7nOoCZd4AcEH3uF5nvd73vd74X\u002BgtTai3LIsHeWDEEJct217a1DvwbIs7bpubFUqFW3b9naxWLwWfSOipAvHcfqqi0KhkMtms3cty1rsaomeG4FpmoMSANVqlXQ6nQMWgacMC4hOBchduEj\u002ByjKjScGh8SS1Wq3nxQZEN3j1eY/Vrfe8rTeQvsf89ARLS1cz5XIZ/uUGXxptQiVRUhJIybudXaZn52a7vbEBpmkyNb/A69YM9W8tDEJOTI2hpI\u002BSkvOZH2f13sNAB\u002B07sV9wHIdH9Unquz9RvoeUPtL3UFISKkky\u002BAT7HwTi6FpsgGma3N9\u002Bg5I\u002BKaFZyU8wOpJChwHnjiuE9wKCXyC/zsQGOI7DeELjtiUPbgky6Wd/HA3KBelC4AIpNfQGl88cQ0mfI5PugRhKkM2DUk0INYwtPI/dAGAlf4rbl06T6DyBVgeCABJzYPhwcm0V8ICNvwJKpVIf37h3IxSyKVAuBMDIYQAMw1jvaxwGrYNl3Xq5o79vat3Y3Nedj4\u002B11je7/m\u002BXOuyzFtDhUgAAAABJRU5ErkJggg==",
+              "WhenOpened": "2025-10-21T06:03:08.149Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "modern_theme.json",
+              "DocumentMoniker": "C:\\Users\\husey\\Desktop\\FORDOTOSANIK-master\\FORDOTOSANIK\\modern_theme.json",
+              "RelativeDocumentMoniker": "FORDOTOSANIK\\modern_theme.json",
+              "ToolTip": "C:\\Users\\husey\\Desktop\\FORDOTOSANIK-master\\FORDOTOSANIK\\modern_theme.json",
+              "RelativeToolTip": "FORDOTOSANIK\\modern_theme.json",
+              "ViewState": "AgIAAJ8AAAAAAAAAAAAAAB0AAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-10-21T06:02:12.305Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "pdf_to_txt_tool.py",
+              "DocumentMoniker": "C:\\Users\\husey\\Desktop\\FORDOTOSANIK-master\\FORDOTOSANIK\\tools\\pdf_to_txt_tool.py",
+              "RelativeDocumentMoniker": "FORDOTOSANIK\\tools\\pdf_to_txt_tool.py",
+              "ToolTip": "C:\\Users\\husey\\Desktop\\FORDOTOSANIK-master\\FORDOTOSANIK\\tools\\pdf_to_txt_tool.py",
+              "RelativeToolTip": "FORDOTOSANIK\\tools\\pdf_to_txt_tool.py",
+              "ViewState": "AgIAAIcAAAAAAAAAAAAAAJkAAAAAAAAAAAAAAA==",
+              "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAHfSURBVDhPpZCxaxNhGMZ/9zVJaUuDUlq1FBWLZBFTCXo4BFyU1qGKi4OkIHhkzF/g0KF00M2lR9YUdDDQQVAcJILoQUd1UNRmkhoRm8RL777v7nOoCZd4AcEH3uF5nvd73vd74X\u002BgtTai3LIsHeWDEEJct217a1DvwbIs7bpubFUqFW3b9naxWLwWfSOipAvHcfqqi0KhkMtms3cty1rsaomeG4FpmoMSANVqlXQ6nQMWgacMC4hOBchduEj\u002ByjKjScGh8SS1Wq3nxQZEN3j1eY/Vrfe8rTeQvsf89ARLS1cz5XIZ/uUGXxptQiVRUhJIybudXaZn52a7vbEBpmkyNb/A69YM9W8tDEJOTI2hpI\u002BSkvOZH2f13sNAB\u002B07sV9wHIdH9Unquz9RvoeUPtL3UFISKkky\u002BAT7HwTi6FpsgGma3N9\u002Bg5I\u002BKaFZyU8wOpJChwHnjiuE9wKCXyC/zsQGOI7DeELjtiUPbgky6Wd/HA3KBelC4AIpNfQGl88cQ0mfI5PugRhKkM2DUk0INYwtPI/dAGAlf4rbl06T6DyBVgeCABJzYPhwcm0V8ICNvwJKpVIf37h3IxSyKVAuBMDIYQAMw1jvaxwGrYNl3Xq5o79vat3Y3Nedj4\u002B11je7/m\u002BXOuyzFtDhUgAAAABJRU5ErkJggg==",
+              "WhenOpened": "2025-10-21T06:47:47.405Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
