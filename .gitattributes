@@ -1,25 +1,26 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 
-# Custom for Visual Studio
-*.cs     diff=csharp
-*.sln    merge=union
-*.csproj merge=union
-*.vbproj merge=union
-*.fsproj merge=union
-*.dbproj merge=union
+# Language detection overrides
+# Mark these as vendored so they don't count towards language stats
+*.html linguist-vendored
+*.css linguist-vendored
+*.js linguist-vendored
+*.tex linguist-vendored
+*.json linguist-vendored
+*.xml linguist-vendored
+*.svg linguist-vendored
+*.spec linguist-vendored
 
-# Standard to msysgit
-*.doc	 diff=astextplain
-*.DOC	 diff=astextplain
-*.docx diff=astextplain
-*.DOCX diff=astextplain
-*.dot  diff=astextplain
-*.DOT  diff=astextplain
-*.pdf  diff=astextplain
-*.PDF	 diff=astextplain
-*.rtf	 diff=astextplain
-*.RTF	 diff=astextplain
+# Force Python detection
+*.py linguist-detectable=true
+*.py linguist-language=Python
 
-# Python
-*.py text eol=lf
+# Ignore build artifacts and external tools from stats
+build/ linguist-vendored
+dist/ linguist-vendored
+FORDOTOSANIK/build/ linguist-vendored
+FORDOTOSANIK/dist/ linguist-vendored
+FORDOTOSANIK/poppler/ linguist-vendored
+FORDOTOSANIK/tesseract/ linguist-vendored
+FORDOTOSANIK/templates/ linguist-vendored
