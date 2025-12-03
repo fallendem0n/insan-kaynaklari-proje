@@ -16,12 +16,12 @@ except ImportError:
 # ocr kütüphanelerini (görselden metin okuma) yüklüyoruz
 try:
     import pytesseract
-    from pdf2image import convert_from_path
+    import fitz # PyMuPDF
     from PIL import Image
 except ImportError:
-    print("tesseract veya pdf2image kütüphaneleri eksik.")
+    print("tesseract veya PyMuPDF kütüphaneleri eksik.")
     pytesseract = None
-    convert_from_path = None
+    fitz = None
 
 # pdf'den metne dönüştürme aracı sınıfı
 class PDFToTXTFrame(ctk.CTkFrame):
@@ -37,10 +37,6 @@ class PDFToTXTFrame(ctk.CTkFrame):
             pytesseract.pytesseract.tesseract_cmd = tesseract_path
         elif pytesseract:
             print(f"uyarı: tesseract yolu bulunamadı: {tesseract_path}")
-
-        self.poppler_path = os.path.join(base_dir, "poppler", "Library", "bin")
-        if not os.path.exists(self.poppler_path):
-             print(f"uyarı: poppler yolu bulunamadı: {self.poppler_path}")
 
         self.grid_columnconfigure(0, weight=1)
         
@@ -125,7 +121,7 @@ class PDFToTXTFrame(ctk.CTkFrame):
             # 2. adım: eğer metin çıkmadıysa ocr deniyoruz
             use_ocr = self.ocr_var.get() == "on"
             if use_ocr and (not full_text or len(full_text) < 1024):
-                if not pytesseract or not convert_from_path:
+                if not pytesseract or not fitz:
                     self.status_label.configure(text="Hata: OCR kütüphaneleri yüklenemedi.", text_color="red")
                     self.ui_reset()
                     return
@@ -134,14 +130,16 @@ class PDFToTXTFrame(ctk.CTkFrame):
                 
                 try:
                     # pdf sayfalarını resme çeviriyoruz
-                    images = convert_from_path(
-                        self.selected_pdf_path,
-                        poppler_path=self.poppler_path
-                    )
+                    doc = fitz.open(self.selected_pdf_path)
                     
                     full_text = "" 
-                    for i, img in enumerate(images):
-                        self.status_label.configure(text=f"OCR Sayfa {i+1}/{len(images)} işleniyor...", text_color="cyan")
+                    for i, page in enumerate(doc):
+                        self.status_label.configure(text=f"OCR Sayfa {i+1}/{len(doc)} işleniyor...", text_color="cyan")
+                        
+                        pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))
+                        import io
+                        img = Image.open(io.BytesIO(pix.tobytes("png")))
+                        
                         # resimden metin okuyoruz
                         text = pytesseract.image_to_string(img, lang='tur+eng')
                         full_text += text + "\n\n"

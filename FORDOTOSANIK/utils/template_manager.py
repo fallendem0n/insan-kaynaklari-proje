@@ -4,10 +4,10 @@ import sys
 from PIL import Image
 try:
     import pytesseract
-    from pdf2image import convert_from_path
+    import fitz # PyMuPDF
 except ImportError:
     pytesseract = None
-    convert_from_path = None
+    fitz = None
 
 # şablon yönetim sınıfı
 class TemplateManager:
@@ -54,8 +54,10 @@ class TemplateManager:
         return sorted(files)
 
     # şablon kullanarak pdf'den veri çıkarıyoruz
+    # şablon kullanarak pdf'den veri çıkarıyoruz
     @staticmethod
-    def extract_data_with_template(pdf_path, template_name, poppler_path=None, tesseract_path=None):
+    @staticmethod
+    def extract_data_with_template(pdf_path, template_name, tesseract_path=None):
         """
         belirtilen şablonu kullanarak pdf'den veri çeker.
         """
@@ -63,19 +65,21 @@ class TemplateManager:
         if not fields:
             return {}
 
-        if not convert_from_path or not pytesseract:
-            raise ImportError("ocr kütüphaneleri (pdf2image, pytesseract) eksik.")
+        if not fitz or not pytesseract:
+            raise ImportError("ocr kütüphaneleri (PyMuPDF, pytesseract) eksik.")
 
         if tesseract_path:
              pytesseract.pytesseract.tesseract_cmd = tesseract_path
 
         try:
             # pdf'in ilk sayfasını resme çeviriyoruz
-            images = convert_from_path(pdf_path, poppler_path=poppler_path, first_page=1, last_page=1)
-            if not images:
-                return {}
+            doc = fitz.open(pdf_path)
+            page = doc.load_page(0)
+            pix = page.get_pixmap(matrix=fitz.Matrix(2, 2)) # 2x zoom
             
-            image = images[0]
+            import io
+            image = Image.open(io.BytesIO(pix.tobytes("png")))
+            
             img_w, img_h = image.size
             
             extracted_data = {}
@@ -98,6 +102,11 @@ class TemplateManager:
                 
                 # resmi kırpıyoruz (ilgili alanı alıyoruz)
                 cropped = image.crop((x, y, x + w, y + h))
+                
+                # eğer döndürülmüş ise resmi çeviriyoruz
+                if field.get('is_rotated', False):
+                    # görsel şablon aracında olduğu gibi 90 derece sola çeviriyoruz
+                    cropped = cropped.rotate(90, expand=True)
                 
                 # ocr ile metni okuyoruz
                 # psm 7: tek satır metin olarak algıla

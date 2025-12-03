@@ -10,11 +10,11 @@ from utils.template_manager import TemplateManager
 # ocr kütüphanelerini yüklemeye çalışıyoruz
 try:
     import pytesseract
-    from pdf2image import convert_from_path
+    import fitz # PyMuPDF
 except ImportError:
     # eğer yüklü değilse none yapıyoruz ki hata vermesin
     pytesseract = None
-    convert_from_path = None
+    fitz = None
 
 # pdf okuma kütüphanesini yüklüyoruz
 try:
@@ -41,9 +41,8 @@ class PDFDataExtractorFrame(ctk.CTkFrame):
         else:
             application_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-        # tesseract ve poppler yollarını belirtiyoruz
+        # tesseract yolunu belirtiyoruz
         self.tesseract_path = os.path.join(application_path, 'tesseract', 'tesseract.exe')
-        self.poppler_path = os.path.join(application_path, 'poppler', 'Library', 'bin')
         
         # eğer pytesseract yüklüyse yolunu ayarlıyoruz
         if pytesseract:
@@ -277,7 +276,6 @@ class PDFDataExtractorFrame(ctk.CTkFrame):
                     try:
                         extracted = TemplateManager.extract_data_with_template(
                             pdf_path, template_name,
-                            poppler_path=self.poppler_path,
                             tesseract_path=self.tesseract_path
                         )
                         row_data.update(extracted)
@@ -321,11 +319,14 @@ class PDFDataExtractorFrame(ctk.CTkFrame):
             
             # 2. metin yoksa ocr deniyoruz
             if not text.strip() or len(text) < 50:
-                if pytesseract and convert_from_path:
+                if pytesseract and fitz:
                     print(f"ocr deneniyor: {os.path.basename(pdf_path)}")
                     try:
-                        images = convert_from_path(pdf_path, poppler_path=self.poppler_path)
-                        for img in images:
+                        doc = fitz.open(pdf_path)
+                        for page in doc:
+                            pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))
+                            import io
+                            img = Image.open(io.BytesIO(pix.tobytes("png")))
                             ocr_text = pytesseract.image_to_string(img, lang='tur+eng')
                             text += ocr_text + "\n"
                     except Exception as ocr_e:

@@ -8,11 +8,11 @@ from utils.template_manager import TemplateManager
 # ocr kütüphanelerini yüklemeye çalışıyoruz
 try:
     import pytesseract
-    from pdf2image import convert_from_path
+    import fitz # PyMuPDF
 except ImportError:
     # eğer yüklü değilse none yapıyoruz
     pytesseract = None
-    convert_from_path = None
+    fitz = None
 
 # görsel şablon oluşturma aracı sınıfı
 class VisualTemplateFrame(ctk.CTkFrame):
@@ -34,7 +34,7 @@ class VisualTemplateFrame(ctk.CTkFrame):
             application_path = os.path.dirname(sys.executable)
         else:
             application_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        self.poppler_path = os.path.join(application_path, 'poppler', 'Library', 'bin')
+        
         self.tesseract_path = os.path.join(application_path, 'tesseract', 'tesseract.exe')
         
         # tesseract yolunu ayarlıyoruz
@@ -107,15 +107,22 @@ class VisualTemplateFrame(ctk.CTkFrame):
             return
             
         try:
-            if not convert_from_path:
-                messagebox.showerror("Hata", "pdf2image kütüphanesi eksik.")
+            if not fitz:
+                messagebox.showerror("Hata", "PyMuPDF (fitz) kütüphanesi eksik.")
                 return
 
             # pdf'in ilk sayfasını resme çeviriyoruz
-            images = convert_from_path(file_path, poppler_path=self.poppler_path, first_page=1, last_page=1)
-            if images:
+            doc = fitz.open(file_path)
+            page = doc.load_page(0) # ilk sayfa
+            pix = page.get_pixmap(matrix=fitz.Matrix(2, 2)) # 2x zoom ile daha net görüntü
+            
+            # pixmap'i PIL Image'a çeviriyoruz
+            img_data = pix.tobytes("png")
+            import io
+            self.image = Image.open(io.BytesIO(img_data))
+            
+            if self.image:
                 self.pdf_path = file_path
-                self.image = images[0]
                 self.display_image()
                 self.fields = []
                 self.refresh_fields_list()
@@ -175,11 +182,14 @@ class VisualTemplateFrame(ctk.CTkFrame):
             self.current_rect = None
             return
             
-        # kullanıcıdan alan adı istiyoruz
-        dialog = ctk.CTkInputDialog(text="Alan Adı:", title="Alan Tanımla")
-        name = dialog.get_input()
+        # kullanıcıdan alan adı ve özelliklerini istiyoruz
+        dialog = FieldDefinitionDialog(self)
+        self.wait_window(dialog)
         
-        if name:
+        if dialog.result:
+            name = dialog.result['name']
+            is_rotated = dialog.result['is_rotated']
+            
             # alanı kaydediyoruz
             field = {
                 'name': name,
@@ -187,46 +197,23 @@ class VisualTemplateFrame(ctk.CTkFrame):
                 'x': int(x1),
                 'y': int(y1),
                 'w': int(w),
-                'h': int(h)
+                'h': int(h),
+                'is_rotated': is_rotated
             }
             self.fields.append(field)
             
             # kalıcı dikdörtgen ve etiket çiziyoruz
-            self.canvas.create_text(x1, y1-10, text=name, fill="red", anchor="sw")
+            # döndürülmüş ise farklı renk veya işaret koyabiliriz
+            color = "orange" if is_rotated else "red"
+            self.canvas.itemconfig(self.current_rect, outline=color)
+            
+            label_text = name + (" (Döndürülmüş)" if is_rotated else "")
+            self.canvas.create_text(x1, y1-10, text=label_text, fill=color, anchor="sw")
             self.refresh_fields_list()
         else:
             self.canvas.delete(self.current_rect)
             
         self.current_rect = None
-
-    # alan listesini yenileme
-    def refresh_fields_list(self):
-        for widget in self.fields_frame.winfo_children():
-            widget.destroy()
-            
-        for i, field in enumerate(self.fields):
-            f_frame = ctk.CTkFrame(self.fields_frame)
-            f_frame.pack(fill="x", pady=2)
-            
-            ctk.CTkLabel(f_frame, text=field['name']).pack(side="left", padx=5)
-            
-            del_btn = ctk.CTkButton(f_frame, text="Sil", width=40, fg_color="red", 
-                                  command=lambda idx=i: self.delete_field(idx))
-            del_btn.pack(side="right", padx=5)
-
-    # alan silme
-    def delete_field(self, index):
-        field = self.fields.pop(index)
-        self.canvas.delete(field['rect_id'])
-        # tüm çizimleri temizleyip tekrar çiziyoruz
-        self.canvas.delete("all")
-        self.display_image()
-        for f in self.fields:
-            rect = self.canvas.create_rectangle(f['x'], f['y'], f['x']+f['w'], f['y']+f['h'], outline="red", width=2)
-            self.canvas.create_text(f['x'], f['y']-10, text=f['name'], fill="red", anchor="sw")
-            f['rect_id'] = rect
-            
-        self.refresh_fields_list()
 
     # ocr testi yapma
     def test_ocr(self):
@@ -243,6 +230,15 @@ class VisualTemplateFrame(ctk.CTkFrame):
         
         try:
             cropped = self.image.crop((field['x'], field['y'], field['x']+field['w'], field['y']+field['h']))
+            
+            # eğer döndürülmüş ise resmi çeviriyoruz
+            if field.get('is_rotated', False):
+                # metin 90 derece dik ise, okumak için -90 (veya 270) çevirmemiz gerekebilir
+                # genelde aşağıdan yukarıya yazılmışsa 90, yukarıdan aşağıya ise -90
+                # varsayılan olarak 90 derece (sağa yatık) kabul edip düzeltmek için sola çevirelim
+                # kullanıcı deneyimine göre bu değişebilir, şimdilik 90 derece sola çeviriyoruz (expand=True önemli)
+                cropped = cropped.rotate(90, expand=True)
+                
             text = pytesseract.image_to_string(cropped, lang='tur+eng', config='--psm 7')
             messagebox.showinfo("OCR Sonucu", f"Alan: {field['name']}\nOkunan Değer: '{text.strip()}'")
         except Exception as e:
@@ -271,9 +267,90 @@ class VisualTemplateFrame(ctk.CTkFrame):
                 'y': f['y'],
                 'w': f['w'],
                 'h': f['h'],
+                'is_rotated': f.get('is_rotated', False),
                 'page_width': page_w,
                 'page_height': page_h
             })
             
         TemplateManager.save_template(name, fields_to_save)
         messagebox.showinfo("Başarılı", f"'{name}' şablonu kaydedildi.")
+
+    # alan listesini yenileme
+    def refresh_fields_list(self):
+        for widget in self.fields_frame.winfo_children():
+            widget.destroy()
+            
+        for i, field in enumerate(self.fields):
+            f_frame = ctk.CTkFrame(self.fields_frame)
+            f_frame.pack(fill="x", pady=2)
+            
+            ctk.CTkLabel(f_frame, text=field['name']).pack(side="left", padx=5)
+            
+            del_btn = ctk.CTkButton(f_frame, text="Sil", width=40, fg_color="red", 
+                                  command=lambda idx=i: self.delete_field(idx))
+            del_btn.pack(side="right", padx=5)
+
+    # alan silme
+    def delete_field(self, index):
+        field = self.fields.pop(index)
+        self.canvas.delete(field['rect_id'])
+        # tüm çizimleri temizleyip tekrar çiziyoruz
+        self.canvas.delete("all")
+        self.display_image()
+        for f in self.fields:
+            color = "orange" if f.get('is_rotated', False) else "red"
+            rect = self.canvas.create_rectangle(f['x'], f['y'], f['x']+f['w'], f['y']+f['h'], outline=color, width=2)
+            label_text = f['name'] + (" (Döndürülmüş)" if f.get('is_rotated', False) else "")
+            self.canvas.create_text(f['x'], f['y']-10, text=label_text, fill=color, anchor="sw")
+            f['rect_id'] = rect
+            
+        self.refresh_fields_list()
+
+# alan tanımlama penceresi
+class FieldDefinitionDialog(ctk.CTkToplevel):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.title("Alan Tanımla")
+        self.geometry("300x200")
+        self.resizable(False, False)
+        
+        self.result = None
+        
+        # pencereyi merkeze alıyoruz
+        self.transient(parent)
+        self.grab_set()
+        
+        self.create_widgets()
+        
+    def create_widgets(self):
+        ctk.CTkLabel(self, text="Alan Adı:").pack(pady=(20, 5))
+        self.name_entry = ctk.CTkEntry(self)
+        self.name_entry.pack(pady=5, padx=20, fill="x")
+        self.name_entry.focus()
+        
+        self.rotated_var = ctk.BooleanVar(value=False)
+        self.rotated_check = ctk.CTkCheckBox(self, text="Döndürülmüş Metin (90°)", variable=self.rotated_var)
+        self.rotated_check.pack(pady=10)
+        
+        btn_frame = ctk.CTkFrame(self, fg_color="transparent")
+        btn_frame.pack(pady=20, fill="x", padx=20)
+        
+        ctk.CTkButton(btn_frame, text="İptal", fg_color="gray", command=self.destroy, width=100).pack(side="left", padx=5)
+        ctk.CTkButton(btn_frame, text="Kaydet", command=self.save, width=100).pack(side="right", padx=5)
+        
+        self.bind("<Return>", lambda e: self.save())
+        self.bind("<Escape>", lambda e: self.destroy())
+
+    def save(self):
+        name = self.name_entry.get().strip()
+        if name:
+            self.result = {
+                'name': name,
+                'is_rotated': self.rotated_var.get()
+            }
+            self.destroy()
+        else:
+            self.name_entry.configure(placeholder_text="Lütfen isim girin")
+
+
+
