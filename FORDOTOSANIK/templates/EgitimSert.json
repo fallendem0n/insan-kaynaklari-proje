@@ -1,0 +1,47 @@
+[
+    {
+        "name": "EgitimTarihi",
+        "x": 942,
+        "y": 610,
+        "w": 391,
+        "h": 53,
+        "page_width": 2339,
+        "page_height": 1654
+    },
+    {
+        "name": "AdSoyad",
+        "x": 656,
+        "y": 251,
+        "w": 307,
+        "h": 49,
+        "page_width": 2339,
+        "page_height": 1654
+    },
+    {
+        "name": "Görev",
+        "x": 654,
+        "y": 314,
+        "w": 300,
+        "h": 48,
+        "page_width": 2339,
+        "page_height": 1654
+    },
+    {
+        "name": "TC",
+        "x": 650,
+        "y": 373,
+        "w": 231,
+        "h": 51,
+        "page_width": 2339,
+        "page_height": 1654
+    },
+    {
+        "name": "Sicil",
+        "x": 903,
+        "y": 371,
+        "w": 121,
+        "h": 58,
+        "page_width": 2339,
+        "page_height": 1654
+    }
+]

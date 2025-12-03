@@ -3,10 +3,10 @@ import os
 import json 
 from tools.pdf_splitter_tool import PDFSplitterFrame
 from tools.pdf_renamer_tool import PDFRenamerFrame
-from tools.egitim_sertifikasi_tool import EgitimSertifikasiFrame
 from tools.pdf_to_txt_tool import PDFToTXTFrame
-from tools.pdf_to_txt_tool import PDFToTXTFrame
-from tools.mail_merger_tool import MailMergerFrame  
+from tools.mail_merger_tool import MailMergerFrame
+from tools.pdf_data_extractor_tool import PDFDataExtractorFrame
+from tools.visual_template_tool import VisualTemplateFrame  
 
 class App(ctk.CTk):
     def __init__(self):
@@ -50,22 +50,26 @@ class App(ctk.CTk):
             ctk.set_default_color_theme("blue")
 
 
-        self.title("Ofis Yardımcısı")
-        self.geometry("1000x775")
+        self.title("Ofis Asistanı Pro")
+        self.geometry("1100x800")
 
         ctk.set_appearance_mode("Dark")
 
         self.main_frame = ctk.CTkFrame(self, fg_color="transparent")
         self.main_frame.pack(fill="both", expand=True)
 
-        self.tab_view = ctk.CTkTabview(self.main_frame, width=250)
-        self.tab_view.pack(padx=20, pady=10, fill="both", expand=True)
+        self.tab_view = ctk.CTkTabview(self.main_frame, width=250, corner_radius=15)
+        self.tab_view.pack(padx=30, pady=20, fill="both", expand=True)
+
+        # Tab font styling
+        self.tab_view._segmented_button.configure(font=ctk.CTkFont(size=14, weight="bold"))
 
         self.tab_view.add("PDF Bölücü")
         self.tab_view.add("PDF Yeniden Adlandır")
-        self.tab_view.add("Eğitim Sertifikası Formatı")
         self.tab_view.add("PDF to TXT")
         self.tab_view.add("Merge Oluşturucu")
+        self.tab_view.add("PDF Veri Çıkarıcı")
+        self.tab_view.add("Görsel Şablon Oluşturucu")
 
         self.pdf_splitter_frame = PDFSplitterFrame(master=self.tab_view.tab("PDF Bölücü"))
         self.pdf_splitter_frame.pack(fill="both", expand=True)
@@ -73,14 +77,17 @@ class App(ctk.CTk):
         self.pdf_renamer_frame = PDFRenamerFrame(master=self.tab_view.tab("PDF Yeniden Adlandır"))
         self.pdf_renamer_frame.pack(fill="both", expand=True)
 
-        self.egitim_sertifikasi_frame = EgitimSertifikasiFrame(master=self.tab_view.tab("Eğitim Sertifikası Formatı"))
-        self.egitim_sertifikasi_frame.pack(fill="both", expand=True)
-
         self.pdf_to_txt_frame = PDFToTXTFrame(master=self.tab_view.tab("PDF to TXT"))
         self.pdf_to_txt_frame.pack(fill="both", expand=True)
 
         self.mail_merger_frame = MailMergerFrame(master=self.tab_view.tab("Merge Oluşturucu"))
         self.mail_merger_frame.pack(fill="both", expand=True)
+
+        self.pdf_data_extractor_frame = PDFDataExtractorFrame(master=self.tab_view.tab("PDF Veri Çıkarıcı"))
+        self.pdf_data_extractor_frame.pack(fill="both", expand=True)
+
+        self.visual_template_frame = VisualTemplateFrame(master=self.tab_view.tab("Görsel Şablon Oluşturucu"))
+        self.visual_template_frame.pack(fill="both", expand=True)
 
         self.bottom_frame = ctk.CTkFrame(self.main_frame)
         self.bottom_frame.pack(side="bottom", fill="x", padx=20, pady=(0, 10))

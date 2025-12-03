@@ -1,0 +1,20 @@
+[
+    {
+        "name": "Ad Soyad",
+        "x": 541,
+        "y": 658,
+        "w": 251,
+        "h": 46,
+        "page_width": 1653,
+        "page_height": 2339
+    },
+    {
+        "name": "TC",
+        "x": 542,
+        "y": 608,
+        "w": 160,
+        "h": 35,
+        "page_width": 1653,
+        "page_height": 2339
+    }
+]
